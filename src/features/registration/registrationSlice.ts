@@ -64,20 +64,20 @@ export const registrationSlice = createAppSlice({
         }),
         setConfirmPassword: create.reducer((state, action: PayloadAction<string>) => { //редюсер для подтверждения пароля 
             state.form.confirmPassword = action.payload
-            state.errors.confirmPassword = validators.validateConfirmPassword(action.payload)
+            state.errors.confirmPassword = validators.validateConfirmPassword(action.payload, state.form.password)
         }),
         setRole: create.reducer((state, action: PayloadAction<RoleType>) => { //редюсер для роли 
             state.form.role = action.payload
             state.errors.role = validators.validateRole(action.payload)
         }),
         
-        validateForm: create.reducer((state) => {
+        validateForm: create.reducer((state) => { //редюсер для валидации формы
             state.errors.name = validators.validateName(state.form.name)
             state.errors.lastname = validators.validateLastname(state.form.lastname)
             state.errors.nickname = validators.validateNickname(state.form.nickname)
             state.errors.email = validators.validateEmail(state.form.email)
             state.errors.password = validators.validatePassword(state.form.password)
-            state.errors.confirmPassword = validators.validateConfirmPassword(state.form.confirmPassword)
+            state.errors.confirmPassword = validators.validateConfirmPassword(state.form.confirmPassword, state.form.password)
             state.errors.role = validators.validateRole(state.form.role)
         })
     }),
@@ -92,7 +92,7 @@ export const registrationSlice = createAppSlice({
         selectRole: (state: RegistrationState) => state.form.role,
         selectErrors: (state: RegistrationState) => state.errors,
 
-        selectFormValidateSuccessfully: (state) => {
+        selectFormValidateSuccessfully: (state) => { //селектор для валидации формы c встроенным условием
             return !Object.values(state.errors).some(error => error !== null) &&
                 state.form.name.trim() !== "" &&
                 state.form.lastname.trim() !== "" &&

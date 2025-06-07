@@ -6,7 +6,7 @@ import { selectName, selectLastname, selectNickname, selectEmail, selectPassword
 
 // Экспортируемые селекторы данных
 export const useRegistrationData = () => {
-    return {
+    return { //возвращаем данные из хранилища
         name: useAppSelector(selectName),
         lastname: useAppSelector(selectLastname),
         nickname: useAppSelector(selectNickname),
@@ -24,41 +24,41 @@ export const useValidateForm = () => {
 
 // Экспортируемые обработчики, dispatch: AppDispatch - это функция dispatch из store, иначе никак, потому что вызывать на верхнем уровне нельзя
 
-export const handleNameChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLInputElement>) => {
+export const handleNameChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLInputElement>) => { //обработчик для имени
     dispatch(setName(e.target.value))
 }
 
-export const handleLastnameChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLInputElement>) => {
+export const handleLastnameChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLInputElement>) => { //обработчик для фамилии
     dispatch(setLastname(e.target.value))
 }
 
-export const handleNicknameChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLInputElement>) => {
+export const handleNicknameChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLInputElement>) => { //обработчик для никнейма
     dispatch(setNickname(e.target.value))
 }
 
-export const handleEmailChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLInputElement>) => {
+export const handleEmailChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLInputElement>) => { //обработчик для email
     dispatch(setEmail(e.target.value))
 }
 
-export const handlePasswordChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLInputElement>) => {
+export const handlePasswordChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLInputElement>) => { //обработчик для пароля
     dispatch(setPassword(e.target.value))
 }
 
-export const handleConfirmPasswordChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLInputElement>) => {
+export const handleConfirmPasswordChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLInputElement>) => { //обработчик для подтверждения пароля
     dispatch(setConfirmPassword(e.target.value))
 }
 
-export const handleRoleChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLSelectElement>) => {
+export const handleRoleChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLSelectElement>) => { //обработчик для роли
     dispatch(setRole(e.target.value as RoleType))
 }
 
 export const handleSubmit = (dispatch: AppDispatch, data: ReturnType<typeof useRegistrationData>, isFormValid: boolean) => (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
 
-    if (!isFormValid) {
+    if (!isFormValid) { //если форма не валидна, то выводим ошибки
         console.log("Ошибки в форме", data.errors)
     } else {
-        console.log("Ошибок нет")
+        console.log("Ошибок нет") //если форма валидна, то выводим данные в консоль и отправляем данные в хранилище
         dispatch(setName(data.name))
         dispatch(setLastname(data.lastname))
         dispatch(setNickname(data.nickname))
@@ -66,7 +66,6 @@ export const handleSubmit = (dispatch: AppDispatch, data: ReturnType<typeof useR
         dispatch(setPassword(data.password))
         dispatch(setConfirmPassword(data.confirmPassword))
         dispatch(setRole(data.role as RoleType))
-        console.log(data)
-
+        console.log(data) //выводим данные в консоль из хранилища
     }
 }
