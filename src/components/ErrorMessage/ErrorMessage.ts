@@ -11,12 +11,16 @@ export type ValidationErrors = { //валидация формы регистр�
     password: string | null
     confirmPassword: string | null
     role: string | null
+    formSecondStep: boolean
+    formThirdStep: boolean
+    formFourthStep: boolean
   }
 
 //Паттерны
 
 const patternName = /^\p{L}+$/u;
 const patternPassword = /^(?=.*[a-zA-Z])(?=.*[0-9])/;
+const patternNickname = /^[a-zA-Z0-9]+$/;
 
 // Создадим валидаторы для обработки ошибок
 
@@ -34,6 +38,7 @@ export const validators = {
     validateNickname: (nickname: string) => {
         if (!nickname.trim()) return "Никнейм не заполнен"
         if (getUniqueNickname(nickname)) return "Никнейм уже занят"
+        if (!patternNickname.test(nickname)) return "Никнейм должен содержать только латинские буквы и цифры"
         return null
     },
     validateEmail: (email: string) => {
@@ -60,5 +65,27 @@ export const validators = {
     },
     validateForm: (errors: ValidationErrors) => {
         return Object.values(errors).some(error => error !== null)
+    },
+    validateFormSecondStep: (nameError: string, lastnameError: string, emailError: string, name: string, lastname: string, email: string) => {
+        if (!nameError && !lastnameError && !emailError && name.trim() !== "" && lastname.trim() !== "" && email.trim() !== "") {
+            return true
+        } else {
+            return false
+        }
+    },
+
+    validateFormThirdStep: (nicknameError: string, passwordError: string, confirmPasswordError: string, nickname: string, password: string, confirmPassword: string) => {
+        if (!nicknameError && !passwordError && !confirmPasswordError &&  nickname.trim() !== "" && password.trim() !== "" && confirmPassword.trim() !== "") {
+            return true
+        } else {
+            return false
+        }
+    },
+    validateFormFourthStep: (roleError: string, role: string) => {
+        if (!roleError &&  role.trim() !== "") {
+            return true
+        } else {
+            return false
+        }
     }
 }

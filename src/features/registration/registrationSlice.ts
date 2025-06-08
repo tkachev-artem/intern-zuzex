@@ -33,7 +33,10 @@ const initialState: RegistrationState = { //начальное состояни�
         email: null,
         password: null,
         confirmPassword: null,
-        role: null
+        role: null,
+        formSecondStep: false, // Инициализируем как false, так как поля пустые
+        formThirdStep: false,
+        formFourthStep: false
     }
 }
 
@@ -44,31 +47,100 @@ export const registrationSlice = createAppSlice({
     reducers: create => ({ //редюсеры, создадим редюсеры для каждого поля формы регистрации и обработаем ошибки 
         setName: create.reducer((state, action: PayloadAction<string>) => { //редюсер для имени 
             state.form.name = action.payload
-            state.errors.name = validators.validateName(action.payload)
+            const nameError = validators.validateName(action.payload)
+            state.errors.name = nameError
+            // Обновляем валидацию второго этапа
+            state.errors.formSecondStep = validators.validateFormSecondStep(
+                nameError ?? "",
+                state.errors.lastname ?? "",
+                state.errors.email ?? "",
+                action.payload,
+                state.form.lastname,
+                state.form.email
+            )
         }),
         setLastname: create.reducer((state, action: PayloadAction<string>) => { //редюсер для фамилии 
             state.form.lastname = action.payload
-            state.errors.lastname = validators.validateLastname(action.payload)
+            const lastnameError = validators.validateLastname(action.payload)
+            state.errors.lastname = lastnameError
+            // Обновляем валидацию второго этапа
+            state.errors.formSecondStep = validators.validateFormSecondStep(
+                state.errors.name ?? "",
+                lastnameError ?? "",
+                state.errors.email ?? "",
+                state.form.name,
+                action.payload,
+                state.form.email
+            )
         }),
         setNickname: create.reducer((state, action: PayloadAction<string>) => { //редюсер для никнейма 
             state.form.nickname = action.payload
-            state.errors.nickname = validators.validateNickname(action.payload)
+            const nicknameError = validators.validateNickname(action.payload)
+            state.errors.nickname = nicknameError
+            // Обновляем валидацию третьего этапа
+            state.errors.formThirdStep = validators.validateFormThirdStep(
+                nicknameError ?? "",
+                state.errors.password ?? "",
+                state.errors.confirmPassword ?? "",
+                action.payload,
+                state.form.password,
+                state.form.confirmPassword
+            )
         }),
         setEmail: create.reducer((state, action: PayloadAction<string>) => { //редюсер для email 
             state.form.email = action.payload
-            state.errors.email = validators.validateEmail(action.payload)
+            const emailError = validators.validateEmail(action.payload)
+            state.errors.email = emailError
+            // Обновляем валидацию второго этапа
+            state.errors.formSecondStep = validators.validateFormSecondStep(
+                state.errors.name ?? "",
+                state.errors.lastname ?? "",
+                emailError ?? "",
+                state.form.name,
+                state.form.lastname,
+                action.payload
+            )
         }),
         setPassword: create.reducer((state, action: PayloadAction<string>) => { //редюсер для пароля 
             state.form.password = action.payload
-            state.errors.password = validators.validatePassword(action.payload)
+            const passwordError = validators.validatePassword(action.payload)
+            state.errors.password = passwordError
+            // Обновляем vallidation для confirmPassword тоже, так как пароль изменился
+            const confirmPasswordError = validators.validateConfirmPassword(state.form.confirmPassword, action.payload)
+            state.errors.confirmPassword = confirmPasswordError
+            // Обновляем валидацию третьего этапа
+            state.errors.formThirdStep = validators.validateFormThirdStep(
+                state.errors.nickname ?? "",
+                passwordError ?? "",
+                confirmPasswordError ?? "",
+                state.form.nickname,
+                action.payload,
+                state.form.confirmPassword
+            )
         }),
         setConfirmPassword: create.reducer((state, action: PayloadAction<string>) => { //редюсер для подтверждения пароля 
             state.form.confirmPassword = action.payload
-            state.errors.confirmPassword = validators.validateConfirmPassword(action.payload, state.form.password)
+            const confirmPasswordError = validators.validateConfirmPassword(action.payload, state.form.password)
+            state.errors.confirmPassword = confirmPasswordError
+            // Обновляем валидацию третьего этапа
+            state.errors.formThirdStep = validators.validateFormThirdStep(
+                state.errors.nickname ?? "",
+                state.errors.password ?? "",
+                confirmPasswordError ?? "",
+                state.form.nickname,
+                state.form.password,
+                action.payload
+            )
         }),
         setRole: create.reducer((state, action: PayloadAction<RoleType>) => { //редюсер для роли 
             state.form.role = action.payload
-            state.errors.role = validators.validateRole(action.payload)
+            const roleError = validators.validateRole(action.payload)
+            state.errors.role = roleError
+            // Обновляем валидацию четвертого этапа
+            state.errors.formFourthStep = validators.validateFormFourthStep(
+                roleError ?? "",
+                action.payload
+            )
         }),
         
         validateForm: create.reducer((state) => { //редюсер для валидации формы
@@ -79,6 +151,27 @@ export const registrationSlice = createAppSlice({
             state.errors.password = validators.validatePassword(state.form.password)
             state.errors.confirmPassword = validators.validateConfirmPassword(state.form.confirmPassword, state.form.password)
             state.errors.role = validators.validateRole(state.form.role)
+
+            state.errors.formSecondStep = validators.validateFormSecondStep(
+                state.errors.name ?? "",
+                state.errors.lastname ?? "",
+                state.errors.email ?? "",
+                state.form.name,
+                state.form.lastname,
+                state.form.email
+            )
+            state.errors.formThirdStep = validators.validateFormThirdStep(
+                state.errors.nickname ?? "",
+                state.errors.password ?? "",
+                state.errors.confirmPassword ?? "",
+                state.form.nickname,
+                state.form.password,
+                state.form.confirmPassword
+            )
+            state.errors.formFourthStep = validators.validateFormFourthStep(
+                state.errors.role ?? "",
+                state.form.role
+            )
         })
     }),
 
@@ -101,10 +194,22 @@ export const registrationSlice = createAppSlice({
                 state.form.password.trim() !== "" &&
                 state.form.confirmPassword.trim() !== "" &&
                 state.form.role.trim() !== ""
+        },
+
+        selectFormSecondStep: (state: RegistrationState) => {
+            return state.errors.formSecondStep
+        },
+
+        selectFormThirdStep: (state: RegistrationState) => {
+            return state.errors.formThirdStep
+        },
+
+        selectFormFourthStep: (state: RegistrationState) => {
+            return state.errors.formFourthStep
         }
     }
 })
 
 export const { setName, setLastname, setNickname, setEmail, setPassword, setConfirmPassword, setRole, validateForm } = registrationSlice.actions //экспортируем действия
 export const { selectName, selectLastname, selectNickname, selectEmail, selectPassword, selectConfirmPassword, 
-    selectRole, selectErrors, selectFormValidateSuccessfully } = registrationSlice.selectors //экспортируем селекторы
+    selectRole, selectErrors, selectFormValidateSuccessfully, selectFormSecondStep, selectFormThirdStep, selectFormFourthStep } = registrationSlice.selectors //экспортируем селекторы

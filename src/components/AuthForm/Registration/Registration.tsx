@@ -1,11 +1,67 @@
 import { RoleEnum } from "@/components/RoleSelector/Role"
-import { useAppDispatch } from "@/app/hooks"
+import { useAppDispatch, useAppSelector } from "@/app/hooks"
 import { handleNameChange, handleLastnameChange, handleNicknameChange, handleEmailChange, handlePasswordChange, handleConfirmPasswordChange, handleRoleChange, useRegistrationData, handleSubmit, useValidateForm } from "./useRegistration"
+import { useState } from "react"
+import "./styles/Registration.scss"
+
+
+import { InputField } from "@/components/InputField/InputField"
+import { 
+    Card, 
+    CardContent,
+    CardHeader,
+    CardTitle,
+    CardDescription,
+    CardFooter,
+} from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { selectFormFourthStep, selectFormSecondStep, selectFormThirdStep } from "@/features/registration/registrationSlice"
 
 const Registration = () => {
     const dispatch = useAppDispatch()
     const { name, lastname, nickname, email, password, confirmPassword, role, errors } = useRegistrationData()
+
+    const formSecondStep = useAppSelector(selectFormSecondStep)
+    const formThirdStep = useAppSelector(selectFormThirdStep)
+    const formFourthStep = useAppSelector(selectFormFourthStep)
     const isFormValid = useValidateForm();
+
+    const REG_STEPS = {
+        USER: 1,
+        ACCOUNT: 2,
+        ROLE: 3,
+        SUCCESS: 4
+    }
+
+    const [currentStep, setCurrentStep] = useState(REG_STEPS.USER)
+
+    // создадим обработку перехода на следующий этап
+    const handleSecondStep = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        if (formSecondStep) {
+            setCurrentStep(REG_STEPS.ACCOUNT)
+        } else {
+            console.log("Поля некорректны")
+        }
+    }
+
+    const handleThirdStep = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        if (formThirdStep) {
+            setCurrentStep(REG_STEPS.ROLE)
+        } else {
+            console.log("Поля некорректны")
+        }
+    }
+
+    const handleFourthStep = (e: React.MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault()
+        if (formFourthStep) {
+            setCurrentStep(REG_STEPS.SUCCESS)
+        } else {
+            console.log("Поля некорректны")
+        }
+    }
 
     //Получим ошибки из хранилища
     const nameError = errors.name
@@ -27,49 +83,90 @@ const Registration = () => {
     };
 
     return (
-        <div>
-            <h1>Registration Form</h1>
+        <div className="registration-page">
             <form onSubmit={handleFormSubmit}>
-                <div>
-                    <label>Имя</label>
-                    <input type="text" value={name} onChange={handleNameChange(dispatch)} />
-                    {nameError && <p>{nameError}</p>}
-                </div>
-                <div>
-                    <label>Фамилия</label>
-                    <input type="text" value={lastname} onChange={handleLastnameChange(dispatch)} />
-                    {lastnameError && <p>{lastnameError}</p>}
-                </div>
-                <div>
-                    <label>Никнейм</label>
-                    <input type="text" value={nickname} onChange={handleNicknameChange(dispatch)} />
-                    {nicknameError && <p>{nicknameError}</p>}
-                </div>
-                <div>
-                    <label>Email</label>
-                    <input type="email" value={email} onChange={handleEmailChange(dispatch)} />
-                    {emailError && <p>{emailError}</p>}
-                </div>
-                <div>
-                    <label>Пароль</label>
-                    <input type="password" value={password} onChange={handlePasswordChange(dispatch)} />
-                    {passwordError && <p>{passwordError}</p>}
-                </div>
-                <div>
-                    <label>Подтверждение пароля</label>
-                    <input type="password" value={confirmPassword} onChange={handleConfirmPasswordChange(dispatch)} />
-                    {confirmPasswordError && <p>{confirmPasswordError}</p>}
-                </div>
-                <div>
-                    <label>Роль</label>
-                    <select value={role} onChange={handleRoleChange(dispatch)}>
+                {currentStep === REG_STEPS.USER && (
+                    <Card className="registration-container">
+                        <CardHeader>
+                            <CardTitle>Создание аккаунта</CardTitle>
+                            <CardDescription>Давайте знакомиться! Напишите кто вы <br /> и укажите вашу почту</CardDescription>
+                        </CardHeader>
+
+                        <CardContent className="card-container">
+                            <InputField text="Имя" type="text" placeholder="Иван" value={name} onChange={handleNameChange(dispatch)} error={nameError} />
+                            <InputField text="Фамилия" type="text" placeholder="Иванов" value={lastname} onChange={handleLastnameChange(dispatch)} error={lastnameError} />
+                            <InputField text="Email" type="email" placeholder="example@example.ru" value={email} onChange={handleEmailChange(dispatch)} error={emailError} />
+                        </CardContent>
+
+                        <CardFooter className="button-container"> 
+
+                            {/* Для прехода на следующий этап ввода данных проверяем поля на корректность (handleSecondStep) */}
+                            <Button className="button" variant="secondary" onClick={handleSecondStep}>Далее</Button>
+                            
+                            
+                            <Button className="button" variant="link">Уже есть аккаунт?</Button>
+
+                        </CardFooter>
+
+                    </Card>
+                )}
+
+                {currentStep === REG_STEPS.ACCOUNT && (
+                    <Card className="registration-container">
+                        <CardHeader>
+                            <CardTitle>Создание аккаунта</CardTitle>
+                            <CardDescription>Эти данные будут использоваться для входа в аккаунт</CardDescription>
+                        </CardHeader>
+
+                        <CardContent className="card-container">
+                            <InputField text="Никнейм" type="text" placeholder="nickname" value={nickname} onChange={handleNicknameChange(dispatch)} error={nicknameError} />
+                            <InputField text="Пароль" type="password" placeholder="********" value={password} onChange={handlePasswordChange(dispatch)} error={passwordError} />
+                            <InputField text="Подтверждение пароля" type="password" placeholder="********" value={confirmPassword} onChange={handleConfirmPasswordChange(dispatch)} error={confirmPasswordError} />
+                        </CardContent>
+
+                        <CardFooter className="button-container">
+                            <Button className="button" variant="secondary" onClick={handleThirdStep}>Далее</Button>
+                            <Button className="button" variant="link" onClick={() => { setCurrentStep(REG_STEPS.USER) }}>Назад</Button>
+                        </CardFooter>
+                    </Card>
+                )}
+
+                {currentStep === REG_STEPS.ROLE && (
+                    <Card className="registration-container">
+                        <CardHeader>
+                            <CardTitle>Создание аккаунта</CardTitle>
+                            <CardDescription>Выберите вашу роль, это последний этап</CardDescription>
+                        </CardHeader>
+
+                        <CardContent>
+                        <select value={role} onChange={handleRoleChange(dispatch)}>
                         {Object.values(RoleEnum).map((role: RoleEnum) => (
                             <option key={role} value={role}>{role}</option>
                         ))}
                         {roleError && <p>{roleError}</p>}
                     </select>
-                </div>
-                <button type="submit">Зарегистрироваться</button>
+
+                        </CardContent>
+
+                        <CardFooter className="button-container">
+                            <Button className="button" onClick={handleFourthStep}>Зарегистрироваться</Button>
+                            <Button className="button" variant="link" onClick={() => { setCurrentStep(REG_STEPS.ACCOUNT) }}>Назад</Button>
+                        </CardFooter>
+                    </Card>
+                )}
+
+                {currentStep === REG_STEPS.SUCCESS && (
+                    <Card className="registration-container">
+                        <CardHeader>
+                            <CardTitle>Создание аккаунта</CardTitle>
+                            <CardDescription>Вы успешно зарегистрировались</CardDescription>
+                        </CardHeader>
+
+                        <CardContent>
+                            <p>Ваш аккаунт успешно создан</p>
+                        </CardContent>
+                    </Card>
+                )}
             </form>
         </div>
     )
