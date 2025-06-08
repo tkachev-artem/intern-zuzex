@@ -1,6 +1,6 @@
 import { RoleEnum } from "@/components/RoleSelector/Role"
 import { useAppDispatch, useAppSelector } from "@/app/hooks"
-import { handleNameChange, handleLastnameChange, handleNicknameChange, handleEmailChange, handlePasswordChange, handleConfirmPasswordChange, handleRoleChange, useRegistrationData, handleSubmit, useValidateForm } from "./useRegistration"
+import { handleNameChange, handleLastnameChange, handleNicknameChange, handleEmailChange, handlePasswordChange, handleConfirmPasswordChange, handleRoleChange, useRegistrationData, useValidateForm, handleRegistrationSubmit } from "./useRegistration"
 import { useState } from "react"
 import "./styles/Registration.scss"
 
@@ -57,7 +57,15 @@ const Registration = () => {
     const handleFourthStep = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.preventDefault()
         if (formFourthStep) {
-            setCurrentStep(REG_STEPS.SUCCESS)
+            // Создаем объект данных для отправки через dispatch
+            const registrationData = { name, lastname, nickname, email, password, confirmPassword, role, errors }
+            
+            // Используем dispatch для отправки данных регистрации
+            const isSubmitSuccessful = handleRegistrationSubmit(dispatch, registrationData, isFormValid)
+            
+            if (isSubmitSuccessful) {
+                setCurrentStep(REG_STEPS.SUCCESS)
+            }
         } else {
             console.log("Поля некорректны")
         }
@@ -72,19 +80,11 @@ const Registration = () => {
     const confirmPasswordError = errors.confirmPassword
     const roleError = errors.role
 
-    const handleData = (e: React.FormEvent<HTMLFormElement>) => {
-        e.preventDefault()
-        console.log("данные в форме такие:", name, lastname, nickname, email, password, confirmPassword, role)
-    }
 
-    const handleFormSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-        handleData(e);
-        handleSubmit(dispatch, { name, lastname, nickname, email, password, confirmPassword, role, errors }, isFormValid)(e);
-    };
 
     return (
         <div className="registration-page">
-            <form onSubmit={handleFormSubmit}>
+            <form>
                 {currentStep === REG_STEPS.USER && (
                     <Card className="registration-container">
                         <CardHeader>
@@ -101,10 +101,10 @@ const Registration = () => {
                         <CardFooter className="button-container"> 
 
                             {/* Для прехода на следующий этап ввода данных проверяем поля на корректность (handleSecondStep) */}
-                            <Button className="button" variant="secondary" onClick={handleSecondStep}>Далее</Button>
+                            <Button className="button" variant="secondary" type="button" onClick={handleSecondStep}>Далее</Button>
                             
                             
-                            <Button className="button" variant="link">Уже есть аккаунт?</Button>
+                            <Button className="button" variant="link" type="button">Уже есть аккаунт?</Button>
 
                         </CardFooter>
 
@@ -125,8 +125,8 @@ const Registration = () => {
                         </CardContent>
 
                         <CardFooter className="button-container">
-                            <Button className="button" variant="secondary" onClick={handleThirdStep}>Далее</Button>
-                            <Button className="button" variant="link" onClick={() => { setCurrentStep(REG_STEPS.USER) }}>Назад</Button>
+                            <Button className="button" variant="secondary" type="button" onClick={handleThirdStep}>Далее</Button>
+                            <Button className="button" variant="link" type="button" onClick={() => { setCurrentStep(REG_STEPS.USER) }}>Назад</Button>
                         </CardFooter>
                     </Card>
                 )}
@@ -149,8 +149,8 @@ const Registration = () => {
                         </CardContent>
 
                         <CardFooter className="button-container">
-                            <Button className="button" onClick={handleFourthStep}>Зарегистрироваться</Button>
-                            <Button className="button" variant="link" onClick={() => { setCurrentStep(REG_STEPS.ACCOUNT) }}>Назад</Button>
+                            <Button className="button" type="button" onClick={handleFourthStep}>Зарегистрироваться</Button>
+                            <Button className="button" variant="link" type="button" onClick={() => { setCurrentStep(REG_STEPS.ACCOUNT) }}>Назад</Button>
                         </CardFooter>
                     </Card>
                 )}

@@ -2,7 +2,7 @@ import { useAppSelector } from "@/app/hooks"
 import type { RoleType } from "@/components/RoleSelector/Role"
 import type { AppDispatch } from "@/app/store"
 import { selectName, selectLastname, selectNickname, selectEmail, selectPassword, selectConfirmPassword, selectRole, selectErrors, 
-    setName, setLastname, setNickname, setEmail, setPassword, setConfirmPassword, setRole, selectFormValidateSuccessfully } from "@/features/registration/registrationSlice"
+    setName, setLastname, setNickname, setEmail, setPassword, setConfirmPassword, setRole, selectFormValidateSuccessfully, submitRegistration } from "@/features/registration/registrationSlice"
 
 // Экспортируемые селекторы данных
 export const useRegistrationData = () => {
@@ -58,7 +58,7 @@ export const handleSubmit = (dispatch: AppDispatch, data: ReturnType<typeof useR
     if (!isFormValid) { //если форма не валидна, то выводим ошибки
         console.log("Ошибки в форме", data.errors)
     } else {
-        console.log("Ошибок нет") //если форма валидна, то выводим данные в консоль и отправляем данные в хранилище
+        console.log("Ошибок нет") //отправляем данные в хранилище
         dispatch(setName(data.name))
         dispatch(setLastname(data.lastname))
         dispatch(setNickname(data.nickname))
@@ -66,6 +66,34 @@ export const handleSubmit = (dispatch: AppDispatch, data: ReturnType<typeof useR
         dispatch(setPassword(data.password))
         dispatch(setConfirmPassword(data.confirmPassword))
         dispatch(setRole(data.role as RoleType))
-        console.log(data) //выводим данные в консоль из хранилища
+        console.log(data) 
+    }
+}
+
+//финальный этап (отправка данных в хранилище)
+export const handleRegistrationSubmit = (dispatch: AppDispatch, data: ReturnType<typeof useRegistrationData>, isFormValid: boolean) => {
+    console.log("Состояние валидации формы:", isFormValid)
+    console.log("Текущие ошибки:", data.errors)
+    console.log("Данные формы:", {
+        name: data.name,
+        lastname: data.lastname,
+        nickname: data.nickname,
+        email: data.email,
+        password: data.password,
+        confirmPassword: data.confirmPassword,
+        role: data.role
+    })
+    
+    if (!isFormValid) {
+        console.log("Ошибки в форме")
+        return false
+    } else {
+        console.log("Форма валидна")
+        
+        dispatch(submitRegistration())
+        
+        console.log("Данные регистрации отправлены")
+        
+        return true
     }
 }

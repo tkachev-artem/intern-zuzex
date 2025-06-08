@@ -172,6 +172,12 @@ export const registrationSlice = createAppSlice({
                 state.errors.role ?? "",
                 state.form.role
             )
+        }),
+
+        submitRegistration: create.reducer((state) => { //редюсер для отправки данных регистрации
+            // Здесь можно добавить логику для отправки данных на сервер
+            // Например, установить статус загрузки, очистить ошибки и т.д.
+            console.log("Отправка данных регистрации через Redux:", state.form)
         })
     }),
 
@@ -186,7 +192,18 @@ export const registrationSlice = createAppSlice({
         selectErrors: (state: RegistrationState) => state.errors,
 
         selectFormValidateSuccessfully: (state) => { //селектор для валидации формы c встроенным условием
-            return !Object.values(state.errors).some(error => error !== null) &&
+            // Проверяем только ошибки полей, исключая булевые поля этапов
+            const fieldErrors = [
+                state.errors.name,
+                state.errors.lastname,
+                state.errors.nickname,
+                state.errors.email,
+                state.errors.password,
+                state.errors.confirmPassword,
+                state.errors.role
+            ]
+            
+            return !fieldErrors.some(error => error !== null) &&
                 state.form.name.trim() !== "" &&
                 state.form.lastname.trim() !== "" &&
                 state.form.nickname.trim() !== "" &&
@@ -210,6 +227,6 @@ export const registrationSlice = createAppSlice({
     }
 })
 
-export const { setName, setLastname, setNickname, setEmail, setPassword, setConfirmPassword, setRole, validateForm } = registrationSlice.actions //экспортируем действия
+export const { setName, setLastname, setNickname, setEmail, setPassword, setConfirmPassword, setRole, validateForm, submitRegistration } = registrationSlice.actions //экспортируем действия
 export const { selectName, selectLastname, selectNickname, selectEmail, selectPassword, selectConfirmPassword, 
     selectRole, selectErrors, selectFormValidateSuccessfully, selectFormSecondStep, selectFormThirdStep, selectFormFourthStep } = registrationSlice.selectors //экспортируем селекторы
