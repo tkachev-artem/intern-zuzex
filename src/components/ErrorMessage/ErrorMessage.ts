@@ -66,6 +66,7 @@ export const validators = {
     validateForm: (errors: ValidationErrors) => {
         return Object.values(errors).some(error => error !== null)
     },
+    
     validateFormSecondStep: (nameError: string, lastnameError: string, emailError: string, name: string, lastname: string, email: string) => {
         if (!nameError && !lastnameError && !emailError && name.trim() !== "" && lastname.trim() !== "" && email.trim() !== "") {
             return true

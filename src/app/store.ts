@@ -1,5 +1,6 @@
 //Слайсы
 import { registrationSlice } from "@/features/registration/registrationSlice"
+import { authSlice } from "@/features/auth/authSlice"
 
 //Импорты библиотек
 import type { Action, ThunkAction } from "@reduxjs/toolkit"
@@ -9,7 +10,8 @@ import { setupListeners } from "@reduxjs/toolkit/query"
 // `combineSlices` automatically combines the reducers using
 // their `reducerPath`s, therefore we no longer need to call `combineReducers`.
 const rootReducer = combineSlices(
-  registrationSlice
+  registrationSlice, 
+  authSlice
 ) //сюда добавляем редюсеры
 // Infer the `RootState` type from the root reducer
 export type RootState = ReturnType<typeof rootReducer>
@@ -24,7 +26,7 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
     middleware: getDefaultMiddleware => {
       return getDefaultMiddleware().concat() //сюда добавляем мидлвары
     },
-    preloadedState,
+    ...(preloadedState && { preloadedState }),
   })
   // configure listeners using the provided defaults
   // optional, but required for `refetchOnFocus`/`refetchOnReconnect` behaviors

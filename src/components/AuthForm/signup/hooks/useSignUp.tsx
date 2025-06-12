@@ -1,8 +1,9 @@
 import { useAppSelector } from "@/app/hooks"
-import type { RoleType } from "@/components/RoleSelector/Role"
 import type { AppDispatch } from "@/app/store"
 import { selectName, selectLastname, selectNickname, selectEmail, selectPassword, selectConfirmPassword, selectRole, selectErrors, 
     setName, setLastname, setNickname, setEmail, setPassword, setConfirmPassword, setRole, selectFormValidateSuccessfully, submitRegistration } from "@/features/registration/registrationSlice"
+
+import type { RoleVariant } from "@/components/RoleSelector/RoleSelector"
 
 // Экспортируемые селекторы данных
 export const useRegistrationData = () => {
@@ -49,7 +50,7 @@ export const handleConfirmPasswordChange = (dispatch: AppDispatch) => (e: React.
 }
 
 export const handleRoleChange = (dispatch: AppDispatch) => (e: React.ChangeEvent<HTMLSelectElement>) => { //обработчик для роли
-    dispatch(setRole(e.target.value as RoleType))
+    dispatch(setRole(e.target.value as RoleVariant))
 }
 
 export const handleSubmit = (dispatch: AppDispatch, data: ReturnType<typeof useRegistrationData>, isFormValid: boolean) => (e: React.FormEvent<HTMLFormElement>) => {
@@ -65,7 +66,7 @@ export const handleSubmit = (dispatch: AppDispatch, data: ReturnType<typeof useR
         dispatch(setEmail(data.email))
         dispatch(setPassword(data.password))
         dispatch(setConfirmPassword(data.confirmPassword))
-        dispatch(setRole(data.role as RoleType))
+        dispatch(setRole(data.role as RoleVariant))
         console.log(data) 
     }
 }

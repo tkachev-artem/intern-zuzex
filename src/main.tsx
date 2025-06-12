@@ -1,8 +1,9 @@
 import { StrictMode } from "react"
 import { createRoot } from "react-dom/client"
-import { Provider } from "react-redux"
-import { App } from "./App"
+import { Provider as ReduxProvider } from "react-redux"
+import { SuiProvider, defaultSystem } from "@saas-ui/react"
 import { store } from "./app/store"
+import { App } from "./App"
 import "./index.css"
 
 const container = document.getElementById("root")
@@ -12,9 +13,11 @@ if (container) {
 
   root.render(
     <StrictMode>
-      <Provider store={store}>
-        <App />
-      </Provider>
+      <ReduxProvider store={store}>
+        <SuiProvider value={defaultSystem}>
+          <App />
+        </SuiProvider>
+      </ReduxProvider>
     </StrictMode>,
   )
 } else {

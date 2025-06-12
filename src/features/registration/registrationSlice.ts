@@ -4,15 +4,24 @@ import { createAppSlice } from "@/app/createAppSlice"
 import type { PayloadAction } from "@reduxjs/toolkit"
 
 //Импорты из компонентов
-import type { RegistrationForm } from "@/components/AuthForm/Registration/registrationFormType"
 import type { ValidationErrors } from "@/components/ErrorMessage/ErrorMessage"
 
 //Создадим типы для состояния
 import { validators } from "@/components/ErrorMessage/ErrorMessage"
-import type { RoleType } from "@/components/RoleSelector/Role"
+
+// Определяем тип локально 
+type SignUpType = {
+    name: string
+    lastname: string
+    nickname: string
+    email: string
+    password: string
+    confirmPassword: string
+    role: string
+}
 
 type RegistrationState = { //форма регистрации
-    form: RegistrationForm
+    form: SignUpType
     errors: ValidationErrors
 }
 
@@ -45,7 +54,7 @@ export const registrationSlice = createAppSlice({
     initialState,
 
     reducers: create => ({ //редюсеры, создадим редюсеры для каждого поля формы регистрации и обработаем ошибки 
-        setName: create.reducer((state, action: PayloadAction<string>) => { //редюсер для имени 
+        setName: create.reducer((state: RegistrationState, action: PayloadAction<string>) => { //редюсер для имени 
             state.form.name = action.payload
             const nameError = validators.validateName(action.payload)
             state.errors.name = nameError
@@ -59,7 +68,7 @@ export const registrationSlice = createAppSlice({
                 state.form.email
             )
         }),
-        setLastname: create.reducer((state, action: PayloadAction<string>) => { //редюсер для фамилии 
+        setLastname: create.reducer((state: RegistrationState, action: PayloadAction<string>) => { //редюсер для фамилии 
             state.form.lastname = action.payload
             const lastnameError = validators.validateLastname(action.payload)
             state.errors.lastname = lastnameError
@@ -73,7 +82,7 @@ export const registrationSlice = createAppSlice({
                 state.form.email
             )
         }),
-        setNickname: create.reducer((state, action: PayloadAction<string>) => { //редюсер для никнейма 
+        setNickname: create.reducer((state: RegistrationState, action: PayloadAction<string>) => { //редюсер для никнейма 
             state.form.nickname = action.payload
             const nicknameError = validators.validateNickname(action.payload)
             state.errors.nickname = nicknameError
@@ -87,7 +96,7 @@ export const registrationSlice = createAppSlice({
                 state.form.confirmPassword
             )
         }),
-        setEmail: create.reducer((state, action: PayloadAction<string>) => { //редюсер для email 
+        setEmail: create.reducer((state: RegistrationState, action: PayloadAction<string>) => { //редюсер для email 
             state.form.email = action.payload
             const emailError = validators.validateEmail(action.payload)
             state.errors.email = emailError
@@ -101,7 +110,7 @@ export const registrationSlice = createAppSlice({
                 action.payload
             )
         }),
-        setPassword: create.reducer((state, action: PayloadAction<string>) => { //редюсер для пароля 
+        setPassword: create.reducer((state: RegistrationState, action: PayloadAction<string>) => { //редюсер для пароля 
             state.form.password = action.payload
             const passwordError = validators.validatePassword(action.payload)
             state.errors.password = passwordError
@@ -118,7 +127,7 @@ export const registrationSlice = createAppSlice({
                 state.form.confirmPassword
             )
         }),
-        setConfirmPassword: create.reducer((state, action: PayloadAction<string>) => { //редюсер для подтверждения пароля 
+        setConfirmPassword: create.reducer((state: RegistrationState, action: PayloadAction<string>) => { //редюсер для подтверждения пароля 
             state.form.confirmPassword = action.payload
             const confirmPasswordError = validators.validateConfirmPassword(action.payload, state.form.password)
             state.errors.confirmPassword = confirmPasswordError
@@ -132,7 +141,7 @@ export const registrationSlice = createAppSlice({
                 action.payload
             )
         }),
-        setRole: create.reducer((state, action: PayloadAction<RoleType>) => { //редюсер для роли 
+        setRole: create.reducer((state: RegistrationState, action: PayloadAction<string>) => { //редюсер для роли 
             state.form.role = action.payload
             const roleError = validators.validateRole(action.payload)
             state.errors.role = roleError
@@ -143,7 +152,7 @@ export const registrationSlice = createAppSlice({
             )
         }),
         
-        validateForm: create.reducer((state) => { //редюсер для валидации формы
+        validateForm: create.reducer((state: RegistrationState) => { //редюсер для валидации формы
             state.errors.name = validators.validateName(state.form.name)
             state.errors.lastname = validators.validateLastname(state.form.lastname)
             state.errors.nickname = validators.validateNickname(state.form.nickname)
@@ -174,7 +183,7 @@ export const registrationSlice = createAppSlice({
             )
         }),
 
-        submitRegistration: create.reducer((state) => { //редюсер для отправки данных регистрации
+        submitRegistration: create.reducer((state: RegistrationState) => { //редюсер для отправки данных регистрации
             // Здесь можно добавить логику для отправки данных на сервер
             // Например, установить статус загрузки, очистить ошибки и т.д.
             console.log("Отправка данных регистрации через Redux:", state.form)
@@ -191,7 +200,9 @@ export const registrationSlice = createAppSlice({
         selectRole: (state: RegistrationState) => state.form.role,
         selectErrors: (state: RegistrationState) => state.errors,
 
-        selectFormValidateSuccessfully: (state) => { //селектор для валидации формы c встроенным условием
+        selectForm: (state: RegistrationState) => state.form,
+
+        selectFormValidateSuccessfully: (state: RegistrationState) => { //селектор для валидации формы c встроенным условием
             // Проверяем только ошибки полей, исключая булевые поля этапов
             const fieldErrors = [
                 state.errors.name,
@@ -229,4 +240,4 @@ export const registrationSlice = createAppSlice({
 
 export const { setName, setLastname, setNickname, setEmail, setPassword, setConfirmPassword, setRole, validateForm, submitRegistration } = registrationSlice.actions //экспортируем действия
 export const { selectName, selectLastname, selectNickname, selectEmail, selectPassword, selectConfirmPassword, 
-    selectRole, selectErrors, selectFormValidateSuccessfully, selectFormSecondStep, selectFormThirdStep, selectFormFourthStep } = registrationSlice.selectors //экспортируем селекторы
+    selectRole, selectForm, selectErrors, selectFormValidateSuccessfully, selectFormSecondStep, selectFormThirdStep, selectFormFourthStep } = registrationSlice.selectors //экспортируем селекторы

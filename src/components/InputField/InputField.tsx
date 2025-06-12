@@ -1,24 +1,39 @@
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+'use client'
 
-import { AlertDisplay } from "@/components/Alert/Alert"
+//импорты для поля ввода
+import { HStack } from '@chakra-ui/react'
+import { Field, Input } from '@saas-ui/react'
+
+//ипорты для ошибки (alert)
+
+import { Stack } from '@chakra-ui/react'
+import { Alert } from '@saas-ui/react'
 
 type InputFieldProps = {
-    text: string;
-    type: string;
-    placeholder: string;
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-    error?: string | null;
-  }
+    label: string
+    variant: 'outline' | 'subtle' | 'flushed' | undefined
+    placeholder: string
+    size: 'xs' | 'sm' | 'md' | 'lg'
+    onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
+    error?: string | null
+    status: 'error' | 'success' | 'warning' | 'info'
+}
 
-export const InputField: React.FC<InputFieldProps> = ({ text, type, placeholder, value, onChange, error }) => {
+
+export const InputField = ({ label, variant, placeholder, size, error, status, onChange }: InputFieldProps) => {
     return (
-      <div className="grid w-full max-w-sm items-center gap-3">
-        <Label htmlFor={text}>{text}</Label>
-        <Input className="w-full" type={type} id={text} placeholder={placeholder} value={value} onChange={onChange} />
-        {error && <AlertDisplay title={error} />}
-      </div>
+        <HStack gap="10" width="full">
+            <Stack gap="2" width="full">
+                <Field.Root required>
+                    <Field.Label>{label}</Field.Label>
+                    <Input placeholder={placeholder} variant={variant} size={size} onChange={onChange} paddingLeft="12px" />
+                </Field.Root>
+                {error && ( //если есть ошибка, то показываем alert
+                    <Stack gap={2} width="full">
+                        <Alert status={status} title={error} padding="2" alignItems="center"></Alert>
+                    </Stack>
+                )}
+                </Stack>
+        </HStack>
     )
-  }
-  
+}

@@ -10,10 +10,10 @@ const uniqueData: UniqueData[] = [
     }
 ]
 
-export function getUniqueNickname(nickname: string) {
+export const getUniqueNickname = (nickname: string) => {
     return uniqueData.find(data => data.nickname === nickname )
 }
 
-export function getUniqueEmail(email: string) {
+export const getUniqueEmail = (email: string) => {
     return uniqueData.find(data => data.email === email )
 }
