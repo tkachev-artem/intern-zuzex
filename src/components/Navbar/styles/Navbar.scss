@@ -1,0 +1,62 @@
+.navbar-root {
+    border-bottom: 1px solid #e0e0e0;
+    background: white;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.navbar-content { 
+    padding: 12px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60px;
+    position: relative;
+}
+
+.navbar-tabs {
+    .tabs-list {
+        border-bottom: none !important;
+        display: flex;
+        align-items: center;
+        position: relative;
+    }
+
+    .tab-trigger {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 16px !important;
+        font-size: 14px;
+        color: #666;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+        background: transparent !important;
+        border: none !important;
+        position: relative;
+        z-index: 1;
+        
+        &:hover {
+            color: #333;
+        }
+
+        &[data-state="active"] {
+            color: #333;
+            font-weight: 500;
+        }
+
+        svg {
+            width: 16px;
+            height: 16px;
+        }
+    }
+}
+
+.right-menu {
+    position: absolute;
+    right: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}

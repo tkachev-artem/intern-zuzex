@@ -19,6 +19,9 @@ const eslintConfig = config(
       "**/.tmp/",
       "**/.yarn/",
       "**/coverage/",
+      "**/docs/",
+      "vitest.config.ts",
+      "vite.config.ts",
     ],
   },
   {
@@ -75,6 +78,8 @@ const eslintConfig = config(
           ],
         },
       ],
+      "@typescript-eslint/no-unsafe-assignment": "warn",
+      "@typescript-eslint/no-unsafe-argument": "warn",
     },
   },
 

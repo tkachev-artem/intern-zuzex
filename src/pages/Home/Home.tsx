@@ -1,14 +1,29 @@
-import "./styles/Home.scss"
+'use client'
+
+import { HomeNavbar } from '@/components/Navbar/Navbar'
+//import "./styles/Home.scss"
+import Post from '@/components/Post/Post'
+
+import {
+  AppShell, 
+  Page
+} from '@saas-ui/react'
 
 const Home = () => {
   return (
-    <div className="home_container">
- 
+    <AppShell
+        height="100vh"
+        header={<HomeNavbar />}
+      >
+        <Page.Root>
+            <Page.Body maxW="none" px="0">
+                <Post />
+            </Page.Body>
+        </Page.Root>
+    </AppShell>
 
-    <div className="text-red-500 text-2xl font-bold">Home</div>
-    <div className="home_title">Home</div>
-    </div>
   )
 }
+
 
 export default Home

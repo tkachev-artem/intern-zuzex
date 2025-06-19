@@ -13,4 +13,4 @@ export default defineConfig({
       tsconfig: path.join(__dirname, "tsconfig.json"),
     },
   },
-}) 
+})

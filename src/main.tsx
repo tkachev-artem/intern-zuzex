@@ -6,6 +6,12 @@ import { store } from "./app/store"
 import { App } from "./App"
 import "./index.css"
 
+// Инициализация localStorage с тестовыми пользователями
+import { initializeDefaultUsers } from "./middleware/localStorageMiddleware"
+
+// Инициализируем localStorage при запуске приложения
+initializeDefaultUsers()
+
 const container = document.getElementById("root")
 
 if (container) {

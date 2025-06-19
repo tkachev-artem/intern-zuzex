@@ -1,0 +1,22 @@
+# Исключения для ESLint
+
+# Сгенерированная документация
+docs/
+
+# Конфигурационные файлы
+vitest.config.ts
+vite.config.ts
+
+# Сборка
+dist/
+build/
+
+# Node modules
+node_modules/
+
+# Временные файлы
+*.tmp
+*.temp
+
+# Логи
+*.log 

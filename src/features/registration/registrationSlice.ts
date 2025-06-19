@@ -1,243 +1,430 @@
-//Импортируем библиотеки для работы с redux
-
-import { createAppSlice } from "@/app/createAppSlice" 
+import { createAppSlice } from "@/app/createAppSlice"
 import type { PayloadAction } from "@reduxjs/toolkit"
 
-//Импорты из компонентов
+// импортируем типы и валидаторы для ошибок
 import type { ValidationErrors } from "@/components/ErrorMessage/ErrorMessage"
-
-//Создадим типы для состояния
 import { validators } from "@/components/ErrorMessage/ErrorMessage"
 
-// Определяем тип локально 
+// импортируем функции для работы с localStorage
+import { 
+  addUser, 
+  isNicknameUnique, 
+  isEmailUnique, 
+  type StoredUser 
+} from "@/middleware/localStorageMiddleware"
+
+// тип для данных формы регистрации
 type SignUpType = {
-    name: string
-    lastname: string
-    nickname: string
-    email: string
-    password: string
-    confirmPassword: string
-    role: string
+  /** Имя пользователя */
+  name: string
+  /** Фамилия пользователя */
+  lastname: string
+  /** Уникальный никнейм пользователя */
+  nickname: string
+  /** Email адрес пользователя */
+  email: string
+  /** Пароль пользователя */
+  password: string
+  /** Подтверждение пароля */
+  confirmPassword: string
+  /** Роль пользователя в системе */
+  role: string
 }
 
-type RegistrationState = { //форма регистрации
-    form: SignUpType
-    errors: ValidationErrors
+// тип для состояния регистрации
+type RegistrationState = {
+  /** Данные формы регистрации */
+  form: SignUpType
+  /** Ошибки валидации формы */
+  errors: ValidationErrors
+  /** Статус успешной регистрации */
+  isRegistrationComplete: boolean
+  /** Сообщение о результате регистрации */
+  registrationMessage: string | null
 }
 
-const initialState: RegistrationState = { //начальное состояние
-    form: {
-        name: "",
-        lastname: "",
-        nickname: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-        role: ""
-    },
-    errors: {
-        name: null,
-        lastname: null,
-        nickname: null,
-        email: null,
-        password: null,
-        confirmPassword: null,
-        role: null,
-        formSecondStep: false, // Инициализируем как false, так как поля пустые
-        formThirdStep: false,
-        formFourthStep: false
-    }
+// начальное состояние
+const initialState: RegistrationState = {
+  form: {
+    name: "",
+    lastname: "",
+    nickname: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+    role: "",
+  },
+  errors: {
+    name: null,
+    lastname: null,
+    nickname: null,
+    email: null,
+    password: null,
+    confirmPassword: null,
+    role: null,
+    formSecondStep: false,
+    formThirdStep: false,
+    formFourthStep: false,
+  },
+  isRegistrationComplete: false,
+  registrationMessage: null,
+}
+
+// функция для генерации id пользователя
+const generateUserId = (): string => {
+  return `user_${Date.now().toString()}`
 }
 
 export const registrationSlice = createAppSlice({
-    name: "registration",
-    initialState,
+  name: "registration",
+  initialState,
 
-    reducers: create => ({ //редюсеры, создадим редюсеры для каждого поля формы регистрации и обработаем ошибки 
-        setName: create.reducer((state: RegistrationState, action: PayloadAction<string>) => { //редюсер для имени 
-            state.form.name = action.payload
-            const nameError = validators.validateName(action.payload)
-            state.errors.name = nameError
-            // Обновляем валидацию второго этапа
-            state.errors.formSecondStep = validators.validateFormSecondStep(
-                nameError ?? "",
-                state.errors.lastname ?? "",
-                state.errors.email ?? "",
-                action.payload,
-                state.form.lastname,
-                state.form.email
-            )
-        }),
-        setLastname: create.reducer((state: RegistrationState, action: PayloadAction<string>) => { //редюсер для фамилии 
-            state.form.lastname = action.payload
-            const lastnameError = validators.validateLastname(action.payload)
-            state.errors.lastname = lastnameError
-            // Обновляем валидацию второго этапа
-            state.errors.formSecondStep = validators.validateFormSecondStep(
-                state.errors.name ?? "",
-                lastnameError ?? "",
-                state.errors.email ?? "",
-                state.form.name,
-                action.payload,
-                state.form.email
-            )
-        }),
-        setNickname: create.reducer((state: RegistrationState, action: PayloadAction<string>) => { //редюсер для никнейма 
-            state.form.nickname = action.payload
-            const nicknameError = validators.validateNickname(action.payload)
-            state.errors.nickname = nicknameError
-            // Обновляем валидацию третьего этапа
-            state.errors.formThirdStep = validators.validateFormThirdStep(
-                nicknameError ?? "",
-                state.errors.password ?? "",
-                state.errors.confirmPassword ?? "",
-                action.payload,
-                state.form.password,
-                state.form.confirmPassword
-            )
-        }),
-        setEmail: create.reducer((state: RegistrationState, action: PayloadAction<string>) => { //редюсер для email 
-            state.form.email = action.payload
-            const emailError = validators.validateEmail(action.payload)
-            state.errors.email = emailError
-            // Обновляем валидацию второго этапа
-            state.errors.formSecondStep = validators.validateFormSecondStep(
-                state.errors.name ?? "",
-                state.errors.lastname ?? "",
-                emailError ?? "",
-                state.form.name,
-                state.form.lastname,
-                action.payload
-            )
-        }),
-        setPassword: create.reducer((state: RegistrationState, action: PayloadAction<string>) => { //редюсер для пароля 
-            state.form.password = action.payload
-            const passwordError = validators.validatePassword(action.payload)
-            state.errors.password = passwordError
-            // Обновляем vallidation для confirmPassword тоже, так как пароль изменился
-            const confirmPasswordError = validators.validateConfirmPassword(state.form.confirmPassword, action.payload)
-            state.errors.confirmPassword = confirmPasswordError
-            // Обновляем валидацию третьего этапа
-            state.errors.formThirdStep = validators.validateFormThirdStep(
-                state.errors.nickname ?? "",
-                passwordError ?? "",
-                confirmPasswordError ?? "",
-                state.form.nickname,
-                action.payload,
-                state.form.confirmPassword
-            )
-        }),
-        setConfirmPassword: create.reducer((state: RegistrationState, action: PayloadAction<string>) => { //редюсер для подтверждения пароля 
-            state.form.confirmPassword = action.payload
-            const confirmPasswordError = validators.validateConfirmPassword(action.payload, state.form.password)
-            state.errors.confirmPassword = confirmPasswordError
-            // Обновляем валидацию третьего этапа
-            state.errors.formThirdStep = validators.validateFormThirdStep(
-                state.errors.nickname ?? "",
-                state.errors.password ?? "",
-                confirmPasswordError ?? "",
-                state.form.nickname,
-                state.form.password,
-                action.payload
-            )
-        }),
-        setRole: create.reducer((state: RegistrationState, action: PayloadAction<string>) => { //редюсер для роли 
-            state.form.role = action.payload
-            const roleError = validators.validateRole(action.payload)
-            state.errors.role = roleError
-            // Обновляем валидацию четвертого этапа
-            state.errors.formFourthStep = validators.validateFormFourthStep(
-                roleError ?? "",
-                action.payload
-            )
-        }),
+  reducers: create => ({
+
+    // меняем имя
+    setName: create.reducer(
+      (state: RegistrationState, action: PayloadAction<string>) => {
+        state.form.name = action.payload
+        const nameError = validators.validateName(action.payload)
+        state.errors.name = nameError
+
+        // обновляем валидацию второго шага
+        state.errors.formSecondStep = validators.validateFormSecondStep(
+          nameError ?? "",
+          state.errors.lastname ?? "",
+          state.errors.email ?? "",
+          action.payload,
+          state.form.lastname,
+          state.form.email,
+        )
+      },
+    ),
+
+    // меняем фамилию
+    setLastname: create.reducer(
+      (state: RegistrationState, action: PayloadAction<string>) => {
+        state.form.lastname = action.payload
+        const lastnameError = validators.validateLastname(action.payload)
+        state.errors.lastname = lastnameError
+
+        // обновляем валидацию второго шага
+        state.errors.formSecondStep = validators.validateFormSecondStep(
+          state.errors.name ?? "",
+          lastnameError ?? "",
+          state.errors.email ?? "",
+          state.form.name,
+          action.payload,
+          state.form.email,
+        )
+      },
+    ),
+
+    // меняем никнейм
+    setNickname: create.reducer(
+      (state: RegistrationState, action: PayloadAction<string>) => {
+        state.form.nickname = action.payload
+        let nicknameError = validators.validateNickname(action.payload)
         
-        validateForm: create.reducer((state: RegistrationState) => { //редюсер для валидации формы
-            state.errors.name = validators.validateName(state.form.name)
-            state.errors.lastname = validators.validateLastname(state.form.lastname)
-            state.errors.nickname = validators.validateNickname(state.form.nickname)
-            state.errors.email = validators.validateEmail(state.form.email)
-            state.errors.password = validators.validatePassword(state.form.password)
-            state.errors.confirmPassword = validators.validateConfirmPassword(state.form.confirmPassword, state.form.password)
-            state.errors.role = validators.validateRole(state.form.role)
+        // если ник не уникален — ошибка
+        if (!nicknameError && action.payload.trim()) {
+          if (!isNicknameUnique(action.payload)) {
+            nicknameError = "Никнейм уже занят"
+          }
+        }
+        
+        state.errors.nickname = nicknameError
 
-            state.errors.formSecondStep = validators.validateFormSecondStep(
-                state.errors.name ?? "",
-                state.errors.lastname ?? "",
-                state.errors.email ?? "",
-                state.form.name,
-                state.form.lastname,
-                state.form.email
-            )
-            state.errors.formThirdStep = validators.validateFormThirdStep(
-                state.errors.nickname ?? "",
-                state.errors.password ?? "",
-                state.errors.confirmPassword ?? "",
-                state.form.nickname,
-                state.form.password,
-                state.form.confirmPassword
-            )
-            state.errors.formFourthStep = validators.validateFormFourthStep(
-                state.errors.role ?? "",
-                state.form.role
-            )
-        }),
+        // обновляем валидацию третьего шага
+        state.errors.formThirdStep = validators.validateFormThirdStep(
+          nicknameError ?? "",
+          state.errors.password ?? "",
+          state.errors.confirmPassword ?? "",
+          action.payload,
+          state.form.password,
+          state.form.confirmPassword,
+        )
+      },
+    ),
 
-        submitRegistration: create.reducer((state: RegistrationState) => { //редюсер для отправки данных регистрации
-            // Здесь можно добавить логику для отправки данных на сервер
-            // Например, установить статус загрузки, очистить ошибки и т.д.
-            console.log("Отправка данных регистрации через Redux:", state.form)
-        })
+    // меняем email
+    setEmail: create.reducer(
+      (state: RegistrationState, action: PayloadAction<string>) => {
+        state.form.email = action.payload
+        let emailError = validators.validateEmail(action.payload)
+        
+        // если email не уникален — ошибка
+        if (!emailError && action.payload.trim()) {
+          if (!isEmailUnique(action.payload)) {
+            emailError = "Email уже занят"
+          }
+        }
+        
+        state.errors.email = emailError
+
+        // обновляем валидацию второго шага
+        state.errors.formSecondStep = validators.validateFormSecondStep(
+          state.errors.name ?? "",
+          state.errors.lastname ?? "",
+          emailError ?? "",
+          state.form.name,
+          state.form.lastname,
+          action.payload,
+        )
+      },
+    ),
+
+    // меняем пароль
+    setPassword: create.reducer(
+      (state: RegistrationState, action: PayloadAction<string>) => {
+        state.form.password = action.payload
+        const passwordError = validators.validatePassword(action.payload)
+        state.errors.password = passwordError
+
+        // обновляем ошибку подтверждения пароля
+        const confirmPasswordError = validators.validateConfirmPassword(
+          state.form.confirmPassword,
+          action.payload,
+        )
+        state.errors.confirmPassword = confirmPasswordError
+
+        // обновляем валидацию третьего шага
+        state.errors.formThirdStep = validators.validateFormThirdStep(
+          state.errors.nickname ?? "",
+          passwordError ?? "",
+          confirmPasswordError ?? "",
+          state.form.nickname,
+          action.payload,
+          state.form.confirmPassword,
+        )
+      },
+    ),
+
+    // меняем подтверждение пароля
+    setConfirmPassword: create.reducer(
+      (state: RegistrationState, action: PayloadAction<string>) => {
+        state.form.confirmPassword = action.payload
+        const confirmPasswordError = validators.validateConfirmPassword(
+          action.payload,
+          state.form.password,
+        )
+        state.errors.confirmPassword = confirmPasswordError
+
+        // обновляем валидацию третьего шага
+        state.errors.formThirdStep = validators.validateFormThirdStep(
+          state.errors.nickname ?? "",
+          state.errors.password ?? "",
+          confirmPasswordError ?? "",
+          state.form.nickname,
+          state.form.password,
+          action.payload,
+        )
+      },
+    ),
+
+    // меняем роль
+    setRole: create.reducer(
+      (state: RegistrationState, action: PayloadAction<string>) => {
+        state.form.role = action.payload
+        const roleError = validators.validateRole(action.payload)
+        state.errors.role = roleError
+
+        // обновляем валидацию четвертого шага
+        state.errors.formFourthStep = validators.validateFormFourthStep(
+          roleError ?? "",
+          action.payload,
+        )
+      },
+    ),
+
+    // валидируем всю форму
+    validateForm: create.reducer((state: RegistrationState) => {
+      state.errors.name = validators.validateName(state.form.name)
+      state.errors.lastname = validators.validateLastname(state.form.lastname)
+      state.errors.nickname = validators.validateNickname(state.form.nickname)
+      state.errors.email = validators.validateEmail(state.form.email)
+      state.errors.password = validators.validatePassword(state.form.password)
+      state.errors.confirmPassword = validators.validateConfirmPassword(
+        state.form.confirmPassword,
+        state.form.password,
+      )
+      state.errors.role = validators.validateRole(state.form.role)
+
+      state.errors.formSecondStep = validators.validateFormSecondStep(
+        state.errors.name ?? "",
+        state.errors.lastname ?? "",
+        state.errors.email ?? "",
+        state.form.name,
+        state.form.lastname,
+        state.form.email,
+      )
+      state.errors.formThirdStep = validators.validateFormThirdStep(
+        state.errors.nickname ?? "",
+        state.errors.password ?? "",
+        state.errors.confirmPassword ?? "",
+        state.form.nickname,
+        state.form.password,
+        state.form.confirmPassword,
+      )
+      state.errors.formFourthStep = validators.validateFormFourthStep(
+        state.errors.role ?? "",
+        state.form.role,
+      )
     }),
 
-    selectors: { //селекторы, получим данные из хранилища
-        selectName: (state: RegistrationState) => state.form.name,
-        selectLastname: (state: RegistrationState) => state.form.lastname,
-        selectNickname: (state: RegistrationState) => state.form.nickname,
-        selectEmail: (state: RegistrationState) => state.form.email,
-        selectPassword: (state: RegistrationState) => state.form.password,
-        selectConfirmPassword: (state: RegistrationState) => state.form.confirmPassword,
-        selectRole: (state: RegistrationState) => state.form.role,
-        selectErrors: (state: RegistrationState) => state.errors,
-
-        selectForm: (state: RegistrationState) => state.form,
-
-        selectFormValidateSuccessfully: (state: RegistrationState) => { //селектор для валидации формы c встроенным условием
-            // Проверяем только ошибки полей, исключая булевые поля этапов
-            const fieldErrors = [
-                state.errors.name,
-                state.errors.lastname,
-                state.errors.nickname,
-                state.errors.email,
-                state.errors.password,
-                state.errors.confirmPassword,
-                state.errors.role
-            ]
-            
-            return !fieldErrors.some(error => error !== null) &&
-                state.form.name.trim() !== "" &&
-                state.form.lastname.trim() !== "" &&
-                state.form.nickname.trim() !== "" &&
-                state.form.email.trim() !== "" &&
-                state.form.password.trim() !== "" &&
-                state.form.confirmPassword.trim() !== "" &&
-                state.form.role.trim() !== ""
-        },
-
-        selectFormSecondStep: (state: RegistrationState) => {
-            return state.errors.formSecondStep
-        },
-
-        selectFormThirdStep: (state: RegistrationState) => {
-            return state.errors.formThirdStep
-        },
-
-        selectFormFourthStep: (state: RegistrationState) => {
-            return state.errors.formFourthStep
+    // отправка регистрации (добавляем пользователя)
+    submitRegistration: create.reducer((state: RegistrationState) => {
+      try {
+        // если ник не уникален — ошибка
+        if (!isNicknameUnique(state.form.nickname)) {
+          state.registrationMessage = `Ошибка: никнейм ${state.form.nickname} уже занят`
+          state.errors.nickname = "Никнейм уже занят"
+          console.error("Ошибка регистрации: никнейм уже существует")
+          return
         }
-    }
+
+        // если email не уникален — ошибка
+        if (!isEmailUnique(state.form.email)) {
+          state.registrationMessage = `Ошибка: email ${state.form.email} уже занят`
+          state.errors.email = "Email уже занят"
+          console.error("Ошибка регистрации: email уже существует")
+          return
+        }
+
+        // создаём нового пользователя
+        const newUser: StoredUser = {
+          id: generateUserId(),
+          nickname: state.form.nickname,
+          password: state.form.password,
+          role: state.form.role,
+          email: state.form.email,
+          createdAt: new Date().toISOString(),
+        }
+
+        // добавляем пользователя в localStorage
+        const success = addUser(newUser)
+
+        if (success) {
+          state.isRegistrationComplete = true
+          state.registrationMessage = `Пользователь ${state.form.nickname} успешно зарегистрирован!`
+
+          console.log("Регистрация успешна:", {
+            id: newUser.id,
+            nickname: newUser.nickname,
+            role: newUser.role,
+            email: newUser.email,
+            name: `${state.form.name} ${state.form.lastname}`,
+          })
+        } else {
+          state.registrationMessage = `Ошибка: не удалось сохранить пользователя`
+          console.error("Ошибка регистрации: не удалось сохранить")
+        }
+      } catch (error) {
+        state.registrationMessage = "Произошла ошибка при регистрации"
+        console.error("Ошибка при регистрации:", error)
+      }
+    }),
+
+    // сброс формы регистрации к начальному состоянию
+    resetRegistrationForm: create.reducer((state: RegistrationState) => {
+      Object.assign(state, initialState)
+    }),
+
+    // очистка сообщения о регистрации
+    clearRegistrationMessage: create.reducer((state: RegistrationState) => {
+      state.registrationMessage = null
+    }),
+  }),
+
+  // селекторы для получения данных из состояния
+  selectors: {
+
+    selectName: (state: RegistrationState) => state.form.name,
+    selectLastname: (state: RegistrationState) => state.form.lastname,
+    selectNickname: (state: RegistrationState) => state.form.nickname,
+    selectEmail: (state: RegistrationState) => state.form.email,
+    selectPassword: (state: RegistrationState) => state.form.password,
+    selectConfirmPassword: (state: RegistrationState) =>
+      state.form.confirmPassword,
+    selectRole: (state: RegistrationState) => state.form.role,
+    selectErrors: (state: RegistrationState) => state.errors,
+    selectForm: (state: RegistrationState) => state.form,
+
+    // проверка, что форма полностью валидна
+    selectFormValidateSuccessfully: (state: RegistrationState) => {
+      const fieldErrors = [
+        state.errors.name,
+        state.errors.lastname,
+        state.errors.nickname,
+        state.errors.email,
+        state.errors.password,
+        state.errors.confirmPassword,
+        state.errors.role,
+      ]
+
+      return (
+        !fieldErrors.some(error => error !== null) &&
+        state.form.name.trim() !== "" &&
+        state.form.lastname.trim() !== "" &&
+        state.form.nickname.trim() !== "" &&
+        state.form.email.trim() !== "" &&
+        state.form.password.trim() !== "" &&
+        state.form.confirmPassword.trim() !== "" &&
+        state.form.role.trim() !== ""
+      )
+    },
+
+    selectFormSecondStep: (state: RegistrationState) => {
+      return state.errors.formSecondStep
+    },
+
+    selectFormThirdStep: (state: RegistrationState) => {
+      return state.errors.formThirdStep
+    },
+
+    selectFormFourthStep: (state: RegistrationState) => {
+      return state.errors.formFourthStep
+    },
+
+    selectIsRegistrationComplete: (state: RegistrationState) =>
+      state.isRegistrationComplete,
+
+    selectRegistrationMessage: (state: RegistrationState) =>
+      state.registrationMessage,
+  },
 })
 
-export const { setName, setLastname, setNickname, setEmail, setPassword, setConfirmPassword, setRole, validateForm, submitRegistration } = registrationSlice.actions //экспортируем действия
-export const { selectName, selectLastname, selectNickname, selectEmail, selectPassword, selectConfirmPassword, 
-    selectRole, selectForm, selectErrors, selectFormValidateSuccessfully, selectFormSecondStep, selectFormThirdStep, selectFormFourthStep } = registrationSlice.selectors //экспортируем селекторы
+// экспортируем экшены
+export const {
+  setName,
+  setLastname,
+  setNickname,
+  setEmail,
+  setPassword,
+  setConfirmPassword,
+  setRole,
+  validateForm,
+  submitRegistration,
+  resetRegistrationForm,
+  clearRegistrationMessage,
+} = registrationSlice.actions
+
+// экспортируем селекторы
+export const {
+  selectName,
+  selectLastname,
+  selectNickname,
+  selectEmail,
+  selectPassword,
+  selectConfirmPassword,
+  selectRole,
+  selectForm,
+  selectErrors,
+  selectFormValidateSuccessfully,
+  selectFormSecondStep,
+  selectFormThirdStep,
+  selectFormFourthStep,
+  selectIsRegistrationComplete,
+  selectRegistrationMessage,
+} = registrationSlice.selectors
+
+export default registrationSlice.reducer

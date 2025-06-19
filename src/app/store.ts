@@ -1,45 +1,45 @@
-//Слайсы
 import { registrationSlice } from "@/features/registration/registrationSlice"
 import { authSlice } from "@/features/auth/authSlice"
+import { postSlice } from "@/features/posts/postSlice"
 
-//Импорты библиотек
 import type { Action, ThunkAction } from "@reduxjs/toolkit"
 import { combineSlices, configureStore } from "@reduxjs/toolkit"
 import { setupListeners } from "@reduxjs/toolkit/query"
 
-// `combineSlices` automatically combines the reducers using
-// their `reducerPath`s, therefore we no longer need to call `combineReducers`.
-const rootReducer = combineSlices(
-  registrationSlice, 
-  authSlice
-) //сюда добавляем редюсеры
-// Infer the `RootState` type from the root reducer
+// Middleware для автоматической синхронизации с localStorage
+import { localStorageMiddleware } from "@/middleware/localStorageMiddleware"
+
+const rootReducer = combineSlices(registrationSlice, authSlice, postSlice)
+
 export type RootState = ReturnType<typeof rootReducer>
 
-// The store setup is wrapped in `makeStore` to allow reuse
-// when setting up tests that need the same store config
 export const makeStore = (preloadedState?: Partial<RootState>) => {
   const store = configureStore({
     reducer: rootReducer,
-    // Adding the api middleware enables caching, invalidation, polling,
-    // and other useful features of `rtk-query`.
+
+    // Добавление middleware включает кеширование, инвалидацию, polling
+    // и другие полезные функции RTK Query
     middleware: getDefaultMiddleware => {
-      return getDefaultMiddleware().concat() //сюда добавляем мидлвары
+      return getDefaultMiddleware().concat(localStorageMiddleware)
     },
+
+    // Применяем предзагруженное состояние если оно передано
     ...(preloadedState && { preloadedState }),
   })
-  // configure listeners using the provided defaults
-  // optional, but required for `refetchOnFocus`/`refetchOnReconnect` behaviors
+
+  // Настраиваем слушатели используя предоставленные по умолчанию
+  // Опционально, но требуется для поведения `refetchOnFocus`/`refetchOnReconnect`
   setupListeners(store.dispatch)
+
   return store
 }
 
 export const store = makeStore()
 
-// Infer the type of `store`
 export type AppStore = typeof store
-// Infer the `AppDispatch` type from the store itself
+
 export type AppDispatch = AppStore["dispatch"]
+
 export type AppThunk<ThunkReturnType = void> = ThunkAction<
   ThunkReturnType,
   RootState,

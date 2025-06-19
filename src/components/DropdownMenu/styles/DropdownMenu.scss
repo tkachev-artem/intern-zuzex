@@ -1,0 +1,16 @@
+.dropdown-menu-content {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+
+    .text {
+        font-size: 14px;
+        color: #000;
+    }
+
+    .logout-text {
+        color: #FF0000;
+    }
+}
+
