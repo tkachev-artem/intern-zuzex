@@ -3,18 +3,7 @@
 import { useState } from "react"
 import { Stack } from "@chakra-ui/react"
 import { Select } from "@saas-ui/react"
-import { createListCollection } from '@chakra-ui/react'
-
-const directions = createListCollection({
-  items: [
-    { label: 'Frontend', value: 'Фронтенд' },
-    { label: 'Backend', value: 'Бекенд' },
-    { label: 'QA', value: 'Тестирование' },
-    { label: 'Design', value: 'Дизайн' },
-    { label: 'Management', value: 'Менеджмент' },
-    { label: 'Marketing', value: 'Маркетинг' },
-  ],
-})
+import { directions } from './collections/directions' // направления
 
 type DirectionSelectProps = {
   label: string
@@ -32,7 +21,7 @@ export const DirectionSelect = ({
   return (
     <Stack gap={2} width="full">
       <Select.Root
-        collection={directions}
+        collection={directions} 
         width="full"
         value={value}
         onValueChange={e => {

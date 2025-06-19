@@ -1,17 +1,21 @@
 .card-root {
     display: flex;
-    padding: 16px;
-    gap: 16px;
-    width: 400px;
-    min-height: 300px;
-    max-height: 400px;
-    overflow: hidden;
-    flex-shrink: 0;
+    flex-direction: column;
+    width: 100%;
+    min-height: 100%;
+    max-width: 856px;
+    max-height: 100%;
+    padding: 32px;
+    gap: 24px;
+    overflow: auto;
+    box-sizing: border-box;
+    background: #fff;
 }
 
 .card-body {
     display: flex;
-    gap: 8px;
+    flex-direction: column;
+    gap: 16px;
 }
 
 .card-footer {
@@ -19,28 +23,29 @@
     flex-direction: row;
     justify-content: space-between;
     align-items: center;
-    gap: 16px;
-    
+    gap: 24px;
+    margin-top: auto;
 }
 
 .badge {
     display: flex;
     box-sizing: border-box;
-    padding-inline: 8px;
+    padding-inline: 12px;
+    font-size: 1.1rem;
 }
 
 .like-button {
     display: flex;
     align-items: center;
-    padding-inline: 8px !important;
+    padding-inline: 12px !important;
 }
 
 .custom-title {
-    font-size: 1.5rem;
+    font-size: 1.6rem;
     font-weight: bold;
 }
 
 .custom-description {
-    font-size: 1rem;
-    color: #666;
+    font-size: 1.4rem;
+    color: #444;
 }

@@ -1,15 +1,29 @@
-import type { FC } from 'react';
 import { useAppDispatch, useAppSelector } from '@/app/hooks';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import './Post.scss';
 
 import { PostCard } from '../PostCard/PostCard';
 import { Flex } from '@chakra-ui/react';
-import { loadPosts } from '@/features/posts/postSlice';
+import { loadPosts, type Post } from '@/features/posts/postSlice';
+import { Filter } from '../Filter/Filter';
+import type { DirectionState } from '../Filter/Filter';
+
+import { directions } from '../PostForm/collections/directions'; // направления
 
 // компонент для отображения всех постов
-const Post: FC = () => {
+const Post = () => {
+
+  // состояние для фильтрации постов
+  const [direction, setDirection] = useState<DirectionState>({
+    frontend: false,
+    backend: false,
+    qa: false,
+    design: false,
+    management: false,
+    marketing: false,
+  });
+
   // получаем все посты из redux store
   const posts = useAppSelector((state) => state.posts);
   const dispatch = useAppDispatch();
@@ -19,12 +33,39 @@ const Post: FC = () => {
     dispatch(loadPosts());
   }, [dispatch]);
 
+  //функция для фильтрации постов, direction - название направления, posts - массив постов
+  const getFilterByDirection = (posts: Post[], direction: DirectionState) => {   
+    // соответствие названий направлений и их значений в direction
+    const directionRatio = { //соответствие названий направлений и их значений
+      frontend: directions.items[0].value, //Фронтенд
+      backend: directions.items[1].value, //Бэкенд
+      qa: directions.items[2].value, //Тестирование
+      design: directions.items[3].value, //Дизайн
+      management: directions.items[4].value, //Менеджмент
+      marketing: directions.items[5].value //Маркетинг
+    };
+
+    const activeDirections = Object.keys(direction)
+      .filter(key => direction[key as keyof DirectionState])
+      .map(key => directionRatio[key as keyof typeof directionRatio]);
+
+    if (activeDirections.length === 0) {
+        return posts;
+    }
+
+    return posts.filter(post => activeDirections.includes(post.direction));
+  }
+
+  const filteredPosts = getFilterByDirection(posts, direction);
+
+
   return (
     <div className="post">
       {/* <button onClick={() => dispatch(loadPosts())}>Restore Post</button> (загрузка постов из локального хранилища по кнопке) */}
-      <Flex wrap="wrap" gap="4" justify="flex-start">
+      <Filter direction={direction} setDirection={setDirection} />
+      <Flex direction="column" gap="4" justify="center" align="center">
         {/* рендерим карточки для каждого поста */}
-        {posts.map(post => (
+        {filteredPosts.map(post => (
           <PostCard key={post.id} post={post} />
         ))}
       </Flex>

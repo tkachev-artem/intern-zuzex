@@ -64,6 +64,17 @@ const postSlice = createAppSlice({ //создание слайса постов
     }),
 });
 
+//фильтрация постов 
+// по направлению
+export const filterPostsByDirection = (state: Post[], direction: string) => {
+    return state.filter(post => post.direction === direction);
+}
+
+// по типу
+export const filterPostsByType = (state: Post[], type: string) => {
+    return state.filter(post => post.type === type);
+}
+
 export const { makePost, toggleLike, loadPosts } = postSlice.actions;
 export { postSlice };
 export default postSlice.reducer;

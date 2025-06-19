@@ -1,6 +1,6 @@
 'use client'
 
-import { useAppDispatch } from '@/app/hooks';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { toggleLike } from '@/features/posts/postSlice';
 import type { Post } from '@/features/posts/postSlice'; 
 import type { FC } from 'react';
@@ -9,8 +9,47 @@ import './PostCard.scss'
 
 import { Badge, HStack, Image, Text, Link } from '@chakra-ui/react'
 import { Card, IconButton } from '@saas-ui/react'
-import { HiAtSymbol } from 'react-icons/hi'
+import { LuAtSign } from 'react-icons/lu'
 import { HiHeart } from 'react-icons/hi'
+import { selectUserNickname } from '@/features/auth/authSlice';
+
+// цвета для направления поста
+
+const getColor = (direction: string) => {
+    switch (direction) {
+        case 'Фронтенд':
+            return 'green';
+        case 'Бэкенд':
+            return 'blue';
+        case 'Тестирование':
+            return 'red';
+        case 'Дизайн':
+            return 'purple';
+        case 'Менеджмент':
+            return 'orange';
+        case 'Маркетинг':
+            return 'yellow';
+        default:
+            return 'gray';
+    }
+}
+
+//указатель того, что пост создан пользователем
+
+const isUserPost = (post: Post, userNickname: string) => {
+    if (post.author === userNickname) {
+        return true;
+    }
+    return false;
+}
+
+const getPostAuthorColor = (post: Post, userNickname: string) => {
+    if (isUserPost(post, userNickname)) {
+        return 'green';
+    }
+    return 'gray';
+}
+
 
 // тип для пропсов карточки поста
 type PostCardProps = {
@@ -20,20 +59,20 @@ type PostCardProps = {
 // компонент карточки поста
 export const PostCard: FC<PostCardProps> = ({ post }) => {
     const dispatch = useAppDispatch();
-
+    const userNickname = useAppSelector(selectUserNickname); // строка или undefined/null
     // обработчик лайка
     const handleLike = () => {
         dispatch(toggleLike(post.id));
     };
 
     return (
-        <Card.Root maxW="sm" overflow="hidden" className='card-root'>
+        <Card.Root overflow="hidden" className='card-root'>
             <Card.Header>
                 <HStack gap="2">
                     {/* тип поста */}
                     <Badge className='badge' size="md" colorPalette="gray">{post.type}</Badge>
                     {/* направление поста */}
-                    <Badge className='badge' size="md" colorPalette="green">{post.direction}</Badge>
+                    <Badge className='badge' size="md" colorPalette={getColor(post.direction)}>{post.direction}</Badge>
                 </HStack>
             </Card.Header>
 
@@ -62,8 +101,8 @@ export const PostCard: FC<PostCardProps> = ({ post }) => {
             <Card.Footer className='card-footer'>
                 {/* автор поста */}
                 <Link href={`/${post.author}`}>
-                    <Badge variant="solid" size="md" colorPalette="green" className='badge'>
-                        <HiAtSymbol />
+                    <Badge variant="solid" size="md" colorPalette={getPostAuthorColor(post, userNickname ?? '')} className='badge'>
+                        <LuAtSign />
                         {post.author} 
                     </Badge>
                 </Link>
