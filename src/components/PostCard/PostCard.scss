@@ -27,10 +27,12 @@
     margin-top: auto;
 }
 
-.badge {
+.badge-tag {
     display: flex;
     box-sizing: border-box;
-    padding-inline: 12px;
+    padding-inline: 16px !important;
+    padding-top: 8px;
+    padding-bottom: 8px;
     font-size: 1.1rem;
 }
 
@@ -38,6 +40,9 @@
     display: flex;
     align-items: center;
     padding-inline: 12px !important;
+    padding-top: 8px !important;
+    padding-bottom: 8px !important;
+    font-size: 1.1rem;
 }
 
 .custom-title {
@@ -46,6 +51,7 @@
 }
 
 .custom-description {
-    font-size: 1.4rem;
+    font-size: 1.2rem;
     color: #444;
 }
+

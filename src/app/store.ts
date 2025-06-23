@@ -7,7 +7,7 @@ import { combineSlices, configureStore } from "@reduxjs/toolkit"
 import { setupListeners } from "@reduxjs/toolkit/query"
 
 // Middleware для автоматической синхронизации с localStorage
-import { localStorageMiddleware } from "@/middleware/localStorageMiddleware"
+import { storageMiddlewares } from "@/middleware"
 
 const rootReducer = combineSlices(registrationSlice, authSlice, postSlice)
 
@@ -20,7 +20,7 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
     // Добавление middleware включает кеширование, инвалидацию, polling
     // и другие полезные функции RTK Query
     middleware: getDefaultMiddleware => {
-      return getDefaultMiddleware().concat(localStorageMiddleware)
+      return getDefaultMiddleware().concat(...storageMiddlewares)
     },
 
     // Применяем предзагруженное состояние если оно передано

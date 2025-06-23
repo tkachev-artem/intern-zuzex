@@ -6,7 +6,7 @@ import type { PayloadAction } from "@reduxjs/toolkit"
 import { authValidators } from "@/components/ErrorMessage/authValidators"
 
 // импорт для работы с localStorage
-import { findUserByNickname } from "@/middleware/localStorageMiddleware"
+import { findUserByNickname } from "@/middleware"
 
 // тип для состояния пользователя
 type UserState = {
@@ -176,6 +176,7 @@ const authSlice = createAppSlice({
     selectUserRole: (state: AuthState) => state.userState.user?.role,
     selectUserNickname: (state: AuthState) => state.userState.user?.nickname,
     selectUserToken: (state: AuthState) => state.userState.user?.token,
+    selectUserId: (state: AuthState) => state.userState.user?.id,
   },
 })
 
@@ -206,6 +207,7 @@ export const {
   selectUserRole,
   selectUserNickname,
   selectUserToken,
+  selectUserId,
 } = authSlice.selectors
 
 // экспорт самого slice

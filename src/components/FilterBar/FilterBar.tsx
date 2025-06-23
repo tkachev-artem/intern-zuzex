@@ -12,12 +12,12 @@ type DirectionState = {
     marketing: boolean;
 }
 
-type FilterProps = {
+type FilterBarProps = {
     direction: DirectionState;
     setDirection: (direction: DirectionState) => void;
 }
 
-export const Filter = ({ direction, setDirection }: FilterProps) => {
+export const FilterBar = ({ direction, setDirection }: FilterBarProps) => {
 
     return (
         <Menu.Root closeOnSelect={false}>
@@ -82,5 +82,5 @@ export const Filter = ({ direction, setDirection }: FilterProps) => {
   )
 }
 
-export default Filter; 
-export type { DirectionState };
+export default FilterBar; 
+export type { DirectionState }; 

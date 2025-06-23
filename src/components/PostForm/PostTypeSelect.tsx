@@ -1,11 +1,11 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Stack } from "@chakra-ui/react"
 import { Select } from "@saas-ui/react"
 import { createListCollection } from '@chakra-ui/react'
 
-const postTypes = createListCollection({ //доступные типы постов (из справочника, пока доступен только “контент”)
+const postTypes = createListCollection({ //доступные типы постов (из справочника, пока доступен только "контент")
   items: [
     { label: 'Контент', value: 'Контент' },
   ],
@@ -14,16 +14,27 @@ const postTypes = createListCollection({ //доступные типы пост�
 type PostTypeSelectProps = {
   label: string
   placeholder: string
+  value?: string // добавляем пропс value для контроля состояния извне
   onChange: (value: string) => void
 }
 
 export const PostTypeSelect = ({
   label,
   placeholder,
+  value: externalValue,
   onChange,
 }: PostTypeSelectProps) => {
 
   const [value, setValue] = useState<string[]>([])
+
+  // синхронизируем внутреннее состояние с внешним значением
+  useEffect(() => {
+    if (externalValue) {
+      setValue([externalValue])
+    } else {
+      setValue([])
+    }
+  }, [externalValue])
 
   return (
     <Stack gap={2} width="full">

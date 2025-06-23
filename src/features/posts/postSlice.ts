@@ -1,5 +1,6 @@
 import { createAppSlice } from "@/app/createAppSlice"
 import type { PayloadAction } from "@reduxjs/toolkit";
+import { loadPostsFromStorage, savePostsToStorage } from "@/middleware";
 
 // типы постов
 export type Post = {
@@ -10,29 +11,12 @@ export type Post = {
     type: 'Контент' | 'Событие' | 'Вакансия';
     direction: string;
     likes: number;
-    isLikedByUser: boolean;
+    likedBy: string[]; //здесь я заменил isLikedByUser на likedBy, это массив id пользователей, которые лайкнули пост
     previewImage?: string;
 }
 
 const initialState: Post[] = [];
 
-const savePostsToStorage = (posts: Post[]): void => { //сохранение постов в локальном хранилище
-    try {
-        localStorage.setItem('posts', JSON.stringify(posts));
-    } catch (error) {
-        console.error('Ошибка сохранения постов в localStorage:', error);
-    }
-}
-
-const loadPostsFromStorage = (): Post[] => { //загрузка постов из локального хранилища
-    try {
-        const stored = localStorage.getItem('posts');
-        return stored ? JSON.parse(stored) as Post[] : [];
-    } catch (error) {
-        console.error('Ошибка загрузки постов из локального хранилища:', error);    
-        return [];
-    }
-}
 const postSlice = createAppSlice({ //создание слайса постов
     name: "posts",
     initialState,
@@ -44,16 +28,57 @@ const postSlice = createAppSlice({ //создание слайса постов
                 savePostsToStorage(state);
             }
         ),
-        toggleLike: create.reducer( //лайк поста
-            (state: Post[], action: PayloadAction<string>) => {
-                const post = state.find(p => p.id === action.payload);
+        //редьюсер для лайка поста по пользователю
+        likePostByUser: create.reducer(
+            (state: Post[], action: PayloadAction<{postId: string, userId: string}>) => {
+                const { postId, userId } = action.payload;
+
+                const post = state.find(p => p.id === postId);
+
                 if (post) {
-                    post.likes = post.isLikedByUser ? post.likes - 1 : post.likes + 1;
-                    post.isLikedByUser = !post.isLikedByUser;
+                    const likeIndex = post.likedBy.indexOf(userId);
+
+                    if (likeIndex === -1) {
+                        // добавляем лайк
+                        post.likedBy.push(userId);
+                        post.likes += 1;
+                    } else {
+                        // убираем лайк
+                        post.likedBy.splice(likeIndex, 1);
+                        post.likes -= 1;
+                    }
+
                     savePostsToStorage(state);
                 }
             }
         ),
+
+        // редьюсер для удаления поста
+        deletePost: create.reducer(
+            (state: Post[], action: PayloadAction<string>) => {
+                const postId = action.payload;
+                const postIndex = state.findIndex(post => post.id === postId);
+                
+                if (postIndex !== -1) {
+                    state.splice(postIndex, 1);
+                    savePostsToStorage(state);
+                }
+            }
+        ),
+
+        // редьюсер для редактирования поста
+        editPost: create.reducer(
+            (state: Post[], action: PayloadAction<Post>) => {
+                const updatedPost = action.payload;
+                const postIndex = state.findIndex(post => post.id === updatedPost.id);
+                
+                if (postIndex !== -1) {
+                    state[postIndex] = updatedPost;
+                    savePostsToStorage(state);
+                }
+            }
+        ),
+
         loadPosts: create.reducer( //загрузка постов из локального хранилища
             (state: Post[]) => {
                 const posts = loadPostsFromStorage();
@@ -62,6 +87,18 @@ const postSlice = createAppSlice({ //создание слайса постов
             }
         )
     }),
+    
+    // селекторы для удобного доступа к данным
+    selectors: {
+        // селектор для получения поста по id
+        selectPostById: (state: Post[], postId: string) => {
+            return state.find(post => post.id === postId);
+        },
+        // селектор для получения постов конкретного автора
+        selectPostsByAuthor: (state: Post[], author: string) => {
+            return state.filter(post => post.author === author);
+        }
+    }
 });
 
 //фильтрация постов 
@@ -75,6 +112,7 @@ export const filterPostsByType = (state: Post[], type: string) => {
     return state.filter(post => post.type === type);
 }
 
-export const { makePost, toggleLike, loadPosts } = postSlice.actions;
+export const { makePost, likePostByUser, deletePost, editPost, loadPosts } = postSlice.actions;
+export const { selectPostById, selectPostsByAuthor } = postSlice.selectors;
 export { postSlice };
 export default postSlice.reducer;

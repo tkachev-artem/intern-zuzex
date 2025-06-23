@@ -7,7 +7,7 @@ import { App } from "./App"
 import "./index.css"
 
 // Инициализация localStorage с тестовыми пользователями
-import { initializeDefaultUsers } from "./middleware/localStorageMiddleware"
+import { initializeDefaultUsers } from "./middleware"
 
 // Инициализируем localStorage при запуске приложения
 initializeDefaultUsers()

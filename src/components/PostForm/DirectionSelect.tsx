@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Stack } from "@chakra-ui/react"
 import { Select } from "@saas-ui/react"
 import { directions } from './collections/directions' // направления
@@ -8,15 +8,26 @@ import { directions } from './collections/directions' // направления
 type DirectionSelectProps = {
   label: string
   placeholder: string
+  value?: string // добавляем пропс value для контроля состояния извне
   onChange: (value: string) => void
 }
 
 export const DirectionSelect = ({
   label,
   placeholder,
+  value: externalValue,
   onChange,
 }: DirectionSelectProps) => {
   const [value, setValue] = useState<string[]>([])
+
+  // синхронизируем внутреннее состояние с внешним значением
+  useEffect(() => {
+    if (externalValue) {
+      setValue([externalValue])
+    } else {
+      setValue([])
+    }
+  }, [externalValue])
 
   return (
     <Stack gap={2} width="full">

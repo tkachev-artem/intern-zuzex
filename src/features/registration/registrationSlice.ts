@@ -11,7 +11,7 @@ import {
   isNicknameUnique, 
   isEmailUnique, 
   type StoredUser 
-} from "@/middleware/localStorageMiddleware"
+} from "@/middleware"
 
 // тип для данных формы регистрации
 type SignUpType = {
