@@ -175,9 +175,10 @@ export const PostCard = ({ post, onEditPost }: PostCardProps) => {
                 <Image 
                     rounded="md"  
                     src={post.previewImage} 
-                    alt="image"
-                    h="200px"
-                    fit="cover"                
+                    alt="Изображение к посту"
+                    w="100%"
+                    h="350px"
+                    fit="cover"
                 />}
             </Card.Body>
 

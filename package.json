@@ -45,6 +45,7 @@
     "react-markdown": "^10.1.0",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.6.1",
+    "remark-gfm": "^4.0.1",
     "three": "^0.167.1"
   },
   "devDependencies": {

@@ -23,6 +23,8 @@ export const PostForm = ({ editingPost, onPostUpdated }: PostFormProps) => {
   const [content, setContent] = useState('')
   const [postType, setPostType] = useState('')
   const [direction, setDirection] = useState('')
+  const [image, setImage] = useState<string | undefined>(undefined)
+  const [isLoading, setIsLoading] = useState(false)
 
   const dispatch = useAppDispatch()
   const userNickname = useAppSelector(selectUserNickname)
@@ -38,6 +40,7 @@ export const PostForm = ({ editingPost, onPostUpdated }: PostFormProps) => {
       setContent(editingPost.content)
       setPostType(editingPost.type)
       setDirection(editingPost.direction)
+      setImage(editingPost.previewImage ?? undefined)
     }
   }, [editingPost])
 
@@ -75,6 +78,7 @@ export const PostForm = ({ editingPost, onPostUpdated }: PostFormProps) => {
         content,
         type: (postType || 'Контент') as 'Контент' | 'Событие' | 'Вакансия',
         direction: direction || 'Frontend',
+        previewImage: image ?? ''
       };
 
       dispatch(editPost(updatedPost));
@@ -90,7 +94,7 @@ export const PostForm = ({ editingPost, onPostUpdated }: PostFormProps) => {
       direction: direction || 'Frontend',
       likes: 0,
       likedBy: [],
-      previewImage: ''
+      previewImage: image ?? ''
     };
 
     dispatch(makePost(newPost));
@@ -106,6 +110,7 @@ export const PostForm = ({ editingPost, onPostUpdated }: PostFormProps) => {
     setContent('');
     setPostType('');
     setDirection('');
+    setImage(undefined);
     }
   }
 
@@ -180,7 +185,7 @@ export const PostForm = ({ editingPost, onPostUpdated }: PostFormProps) => {
       <Separator />
 
       {/* компонент для загрузки и предпросмотра фото */}
-      <PhotoPreviewUpload />
+      <PhotoPreviewUpload image={image} setImage={setImage} setIsLoading={setIsLoading} /> 
 
       {/* кнопка для создания/обновления поста */}
       <Button 
@@ -189,7 +194,7 @@ export const PostForm = ({ editingPost, onPostUpdated }: PostFormProps) => {
         size="lg"
         width="full"
         mt={4}
-        disabled={!isFormValid}
+        disabled={!isFormValid || isLoading}
       >
         {isEditMode ? 'Сохранить изменения' : 'Создать пост'}
       </Button>
