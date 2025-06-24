@@ -34,7 +34,7 @@ export const DropdownMenu = () => {
     <Menu.Root onSelect={handleMenu}>
       <Menu.Trigger asChild>
         <IconButton variant="ghost" size="md" aria-label="User menu">
-          <Avatar size="md" name={userNickname} src="" />
+          <Avatar size="md" name={userNickname} />
         </IconButton>
       </Menu.Trigger>
       <Menu.Content className="dropdown-menu-content">

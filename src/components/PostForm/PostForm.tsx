@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react'
 import { Button, Stack, Separator, Text } from '@chakra-ui/react'
 import { Input, Textarea } from '@saas-ui/react'
+import './PostForm.scss'
 import { PhotoPreviewUpload } from './FileUpload'
 import { PostTypeSelect } from './PostTypeSelect'
 import { DirectionSelect } from './DirectionSelect'
@@ -118,95 +119,98 @@ export const PostForm = ({ editingPost, onPostUpdated }: PostFormProps) => {
   const isFormValid = title && content && postType && direction && isAuthenticated && userNickname;
 
   return (
-    <Stack gap={4} width="full">
-      {/* отладочная информация по состоянию формы */}
-      <Stack gap={1} fontSize="sm" color="gray.500" p={2} bg="gray.50" rounded="md">
-        <div>Режим: {isEditMode ? 'Редактирование' : 'Создание'}</div>
-        <div>Авторизован: {isAuthenticated ? 'Да' : 'Нет'}</div>
-        <div>Пользователь: {userNickname ?? 'Не найден'}</div>
-        <div>Заголовок: {title ? 'Заполнен' : 'Пустой'}</div>
-        <div>Содержание: {content ? 'Заполнено' : 'Пустое'}</div>
-        <div>Тип поста: {postType || 'Не выбран'}</div>
-        <div>Направление: {direction || 'Не выбрано'}</div>
-      </Stack>
-
+    <Stack>
       {/* поле для заголовка */}
-      <Input 
-        placeholder="Заголовок" 
-        value={title}
-        onChange={(e) => {
-          if (e.target.value.length <= 100) {
-            setTitle(e.target.value)
-          }
-        }}
-        maxLength={100}
-      />
-
-      {/* отображаем количество символов в заголовке */}
-      <Text fontSize="sm" color="gray.500" textAlign="right">
-        {title.length} / 100
-      </Text>
+      <Text className="form-label">Заголовок</Text>
+      <Stack className="form-field">
+        <Input 
+          placeholder="Заголовок поста" 
+          value={title}
+          onChange={(e) => {
+            if (e.target.value.length <= 100) {
+              setTitle(e.target.value)
+            }
+          }}
+          maxLength={100}
+          size="md"
+          className="form-input"
+        />
+        {/* отображаем количество символов в заголовке */}
+        <Text className="form-counter">
+          {title.length} / 100 символов
+        </Text>
+      </Stack>
       
       {/* поле для содержания */}
-      <Textarea 
-        placeholder="Содержание" 
-        value={content}
-        onChange={(e) => { 
-          if (e.target.value.length <= 20000) {
-            setContent(e.target.value)
-          }
-        }}
-        rows={6}
-        maxLength={20000}
-      />
+      <Text className="form-label">Содержание</Text>
+      <Stack className="form-field">
+        <Textarea 
+          placeholder="Содержание поста (поддерживается Markdown)" 
+          value={content}
+          onChange={(e) => { 
+            if (e.target.value.length <= 20000) {
+              setContent(e.target.value)
+            }
+          }}
+          rows={8}
+          maxLength={20000}
+          size="md"
+          className="form-textarea"
+        />
+        {/* отображаем количество символов в содержании */}
+        <Text className="form-counter">
+          {content.length} / 20000 символов
+        </Text>
+      </Stack>
 
-      {/* отображаем количество символов в содержании */}
-      <Text fontSize="sm" color="gray.500" textAlign="right">
-        {content.length} / 20000
-      </Text>
 
+      {/* селекторы типа и направления в две колонки */}
+      <Stack className="form-selectors">
+        <Stack className="form-selector">
+          <PostTypeSelect
+            label="Тип поста"
+            placeholder="Выберите тип поста"
+            value={postType}
+            onChange={setPostType}
+          />
+        </Stack>
+        <Stack className="form-selector">
+          <DirectionSelect
+            label="Направление"
+            placeholder="Выберите направление"
+            value={direction}
+            onChange={setDirection}
+          />
+        </Stack>
+      </Stack>
 
-      {/* селектор типа поста */}
-      <PostTypeSelect
-        label="Тип поста"
-        placeholder="Выберите тип поста"
-        value={postType}
-        onChange={setPostType}
-      />
-
-      {/* селектор направления */}
-      <DirectionSelect
-        label="Направление"
-        placeholder="Выберите направление"
-        value={direction}
-        onChange={setDirection}
-      />
-
-      <Separator />
+      <Separator className="form-separator" />
 
       {/* компонент для загрузки и предпросмотра фото */}
       <PhotoPreviewUpload image={image} setImage={setImage} setIsLoading={setIsLoading} /> 
 
       {/* кнопка для создания/обновления поста */}
-      <Button 
-        onClick={handleSubmit}
-        colorScheme="blue"
-        size="lg"
-        width="full"
-        mt={4}
-        disabled={!isFormValid || isLoading}
-      >
-        {isEditMode ? 'Сохранить изменения' : 'Создать пост'}
-      </Button>
-      
-      {/* если пользователь не авторизован — показываем предупреждение */}
-      {!isAuthenticated && (
-        <Stack gap={2} width="full">
-          <div style={{ color: 'red', fontSize: '14px', textAlign: 'center' }}>
+      <Stack className="form-submit">
+        <Button 
+          onClick={handleSubmit}
+          colorScheme="blue"
+          size="lg"
+          width="full"
+          disabled={!isFormValid || isLoading}
+          loading={isLoading}
+          loadingText={isEditMode ? "Сохранение..." : "Создание..."}
+          className="form-button"
+        >
+          {isEditMode ? 'Сохранить изменения' : 'Создать пост'}
+        </Button>
+        
+        {/* если пользователь не авторизован — показываем предупреждение */}
+        {!isAuthenticated && (
+          <Text className="form-warning">
             Для создания поста необходимо авторизоваться
-          </div>
-        </Stack>
-      )}
+          </Text>
+        )}
+      </Stack>
     </Stack>
   )
 }

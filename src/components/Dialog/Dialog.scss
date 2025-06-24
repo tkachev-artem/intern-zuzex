@@ -1,0 +1,23 @@
+.dialog-modal {
+  max-width: 48rem;
+  margin: 0 auto;
+  margin-top: 5vh;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  max-height: 90vh;
+  overflow-y: auto;
+  background-color: white;
+}
+
+.dialog-header {
+  padding-bottom: 1rem;
+}
+
+.dialog-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.dialog-body {
+  padding: 0;
+} 

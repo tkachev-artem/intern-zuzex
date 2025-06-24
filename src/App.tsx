@@ -8,6 +8,7 @@ import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from "./app/hooks"
 import { restoreUser, selectIsAuthenticated } from "./features/auth/authSlice"
 import { ProtectedRoute } from "./components/RouteGuard/RouteGuard"
+import PostPage from "./pages/Post/PostPage"
 
 export const App = () => {
   const dispatch = useAppDispatch()
@@ -64,6 +65,10 @@ export const App = () => {
         />
 
         {/* здесь должна быть страница с постом с полным текстом */}
+        <Route 
+          path="/post/:id" 
+          element={<PostPage />} 
+        />
         
         {/* профиль пользователя */}
 

@@ -1,6 +1,7 @@
 'use client'
 
-import { Text, Button, Stack, HStack } from '@chakra-ui/react'
+import { Text, Button, HStack } from '@chakra-ui/react'
+import { Dialog } from '@saas-ui/react'
 import './ConfirmationModal.scss'
 
 type ConfirmationModalProps = {
@@ -24,14 +25,9 @@ export const ConfirmationModal = ({
   cancelText = "Отмена",
   variant = "danger"
 }: ConfirmationModalProps) => {
-  if (!isOpen) return null;
-
-  const handleOverlayClick = () => {
+  const handleConfirm = () => {
+    onConfirm();
     onClose();
-  };
-
-  const handleContentClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
   };
 
   const getConfirmButtonColorScheme = () => {
@@ -48,26 +44,42 @@ export const ConfirmationModal = ({
   };
 
   return (
-    <div className="confirmation-modal-overlay" onClick={handleOverlayClick}>
-      <div className="confirmation-modal-content" onClick={handleContentClick}>
-        <Stack gap={4} p={6}>
-          <Text fontSize="lg" fontWeight="semibold">
+    <Dialog.Root open={isOpen}>
+      <Dialog.Backdrop />
+      <Dialog.Content className="confirmation-modal">
+        <Dialog.Header className="confirmation-header">
+          <Dialog.Title className="confirmation-title">
             {title}
-          </Text>
-          <Text>
+          </Dialog.Title>
+          <Dialog.CloseButton onClick={onClose} />
+        </Dialog.Header>
+        <Dialog.Body className="confirmation-body">
+          <Text className="confirmation-message">
             {message}
           </Text>
-          <HStack gap={3} justify="flex-end">
-            <Button variant="outline" onClick={onClose}>
+        </Dialog.Body>
+        <Dialog.Footer className="confirmation-footer">
+          <HStack className="confirmation-buttons">
+            <Button 
+              variant="outline" 
+              onClick={onClose}
+              className="confirmation-button"
+              size="md"
+            >
               {cancelText}
             </Button>
-            <Button colorScheme={getConfirmButtonColorScheme()} onClick={onConfirm}>
+            <Button 
+              colorScheme={getConfirmButtonColorScheme()} 
+              onClick={handleConfirm}
+              className="confirmation-button"
+              size="md"
+            >
               {confirmText}
             </Button>
           </HStack>
-        </Stack>
-      </div>
-    </div>
+        </Dialog.Footer>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 };
 

@@ -2,59 +2,77 @@ import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { useEffect, useState } from 'react';
 
 import './Post.scss';
+import '../Dialog/Dialog.scss';
 
 import { PostCard } from '../PostCard/PostCard';
 import { PostForm } from '../PostForm/PostForm';
-import { Flex, Button, Stack } from '@chakra-ui/react';
+import { Flex } from '@chakra-ui/react';
+import { Dialog } from '@saas-ui/react';
 import { loadPosts, type Post } from '@/features/posts/postSlice';
 import { FilterBar } from '../FilterBar';
 import type { DirectionState } from '../FilterBar';
 
 import { directions } from '../PostForm/collections/directions'; // направления
 
-// компонент модального окна для редактирования поста
+// соответствие названий направлений и их значений
+const directionValueMap: Record<keyof DirectionState, string> = {
+  frontend: directions.items[0].value,
+  backend: directions.items[1].value,
+  qa: directions.items[2].value,
+  design: directions.items[3].value,
+  management: directions.items[4].value,
+  marketing: directions.items[5].value,
+};
+
+// Модальное окно для редактирования поста
 type EditPostModalProps = {
   isOpen: boolean;
   onClose: () => void;
   editingPost: Post | null;
-}
+};
 
 const EditPostModal = ({ isOpen, onClose, editingPost }: EditPostModalProps) => {
-  if (!isOpen || !editingPost) return null;
+  if (!editingPost) return null;
 
-  // обработчик успешного обновления поста
   const handlePostUpdated = () => {
-    onClose(); // закрываем модальное окно после обновления
+    onClose();
   };
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => { e.stopPropagation(); }}>
-        <Stack gap={4} p={6}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <h2 style={{ fontSize: '1.25rem', fontWeight: '600', margin: 0 }}>
-              Редактирование поста
-            </h2>
-            <Button variant="ghost" size="sm" onClick={onClose}>
-              ✕
-            </Button>
-          </div>
-          
-          {/* форма редактирования поста */}
+    <Dialog.Root open={isOpen}>
+      <Dialog.Backdrop />
+      <Dialog.Content className="dialog-modal">
+        <Dialog.Header className="dialog-header">
+          <Dialog.Title className="dialog-title">
+            Редактирование поста
+          </Dialog.Title>
+          <Dialog.CloseButton onClick={onClose} />
+        </Dialog.Header>
+        <Dialog.Body className="dialog-body">
           <PostForm 
             editingPost={editingPost}
             onPostUpdated={handlePostUpdated}
           />
-        </Stack>
-      </div>
-    </div>
+        </Dialog.Body>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 };
 
-// компонент для отображения всех постов
-const Post = () => {
+const getFilteredPosts = (
+  posts: Post[],
+  direction: DirectionState
+): Post[] => {
+  const activeDirections = Object.keys(direction)
+    .filter((key) => direction[key as keyof DirectionState])
+    .map((key) => directionValueMap[key as keyof DirectionState]);
 
-  // состояние для фильтрации постов
+  if (activeDirections.length === 0) return posts;
+
+  return posts.filter((post) => activeDirections.includes(post.direction));
+};
+
+const Post = () => {
   const [direction, setDirection] = useState<DirectionState>({
     frontend: false,
     backend: false,
@@ -64,55 +82,27 @@ const Post = () => {
     marketing: false,
   });
 
-  // состояние для модального окна редактирования
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
   const [editingPost, setEditingPost] = useState<Post | null>(null);
 
-  // получаем все посты из redux store
   const posts = useAppSelector((state) => state.posts);
   const dispatch = useAppDispatch();
 
-  // при загрузке компонента загружаем посты из localStorage
   useEffect(() => {
     dispatch(loadPosts());
   }, [dispatch]);
 
-  // обработчик редактирования поста
   const handleEditPost = (post: Post) => {
     setEditingPost(post);
     setIsEditModalOpen(true);
   };
 
-  // обработчик закрытия модального окна редактирования
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false);
     setEditingPost(null);
   };
 
-  //функция для фильтрации постов, direction - название направления, posts - массив постов
-  const getFilterByDirection = (posts: Post[], direction: DirectionState) => {   
-    // соответствие названий направлений и их значений в direction
-    const directionRatio = { //соответствие названий направлений и их значений
-      frontend: directions.items[0].value, //Фронтенд
-      backend: directions.items[1].value, //Бэкенд
-      qa: directions.items[2].value, //Тестирование
-      design: directions.items[3].value, //Дизайн
-      management: directions.items[4].value, //Менеджмент
-      marketing: directions.items[5].value //Маркетинг
-    };
-
-    const activeDirections = Object.keys(direction)
-      .filter(key => direction[key as keyof DirectionState])
-      .map(key => directionRatio[key as keyof typeof directionRatio]);
-
-    if (activeDirections.length === 0) {
-        return posts;
-    }
-
-    return posts.filter(post => activeDirections.includes(post.direction));
-  }
-
-  const filteredPosts = getFilterByDirection(posts, direction);
+  const filteredPosts = getFilteredPosts(posts, direction);
 
   return (
     <div className="post">

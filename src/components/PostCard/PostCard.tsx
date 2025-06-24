@@ -19,7 +19,6 @@ import { selectUserId } from '@/features/auth/authSlice';
 import { ConfirmationModal } from '../ConfirmationModal';
 
 
-
 // цвета для направления поста
 const getColor = (direction: string) => {
     switch (direction) {
@@ -59,10 +58,11 @@ const getPostAuthorColor = (post: Post, userNickname: string) => {
 type PostCardProps = {
     post: Post;
     onEditPost?: (post: Post) => void; // колбэк для редактирования поста
+    FullPostOpen?: boolean; // открытие полного поста
 };
 
 // компонент карточки поста
-export const PostCard = ({ post, onEditPost }: PostCardProps) => {
+export const PostCard = ({ post, onEditPost, FullPostOpen }: PostCardProps) => {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
     const userNickname = useAppSelector(selectUserNickname); // строка или undefined/null
@@ -70,6 +70,9 @@ export const PostCard = ({ post, onEditPost }: PostCardProps) => {
     
     // состояние для модального окна удаления
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+
+    // состояние для открытия полного поста
+    const [isFullPostOpen, setIsFullPostOpen] = useState(FullPostOpen);
     
     // проверяем, является ли текущий пользователь автором поста
     const isAuthor = userNickname && post.author === userNickname;
@@ -97,6 +100,7 @@ export const PostCard = ({ post, onEditPost }: PostCardProps) => {
     // обработчик навигации к полному посту
     const handleNavigateToPost = () => {
         void navigate(`/post/${post.id}`);
+        setIsFullPostOpen(true);
     };
 
     // обработчик навигации к профилю автора
@@ -158,20 +162,35 @@ export const PostCard = ({ post, onEditPost }: PostCardProps) => {
                 </Card.Title>
 
                 {/* описание поста (обрезаем если длинное) */}
-                <Card.Description className="custom-description">
-                    <ReactMarkdown>
-                        {post.content.length > 500 ? post.content.slice(0, 500) + '...' : post.content}
-                    </ReactMarkdown>
+                <div className="custom-description">
+                    {!isFullPostOpen && post.content.length > 500 && (
+                        <> 
 
-                    {post.content.length > 500 && (
+                        <ReactMarkdown>
+                        {post.content.length > 500 ? post.content.slice(0, 500) + '...' : post.content}
+                        </ReactMarkdown>
+
                         <Button variant="outline" size="md" marginLeft={4} paddingInline={4} onClick={handleNavigateToPost}>
                             <Text textStyle="md">Читать далее</Text>
                         </Button>
+                        </>
                     )}
-                </Card.Description>
+
+                    {!isFullPostOpen && post.content.length < 500 && (
+                        <ReactMarkdown>
+                            {post.content}
+                        </ReactMarkdown>
+                    )}
+
+                    {isFullPostOpen && (
+                        <ReactMarkdown>
+                            {post.content}
+                        </ReactMarkdown>
+                    )}
+                </div>
 
                 {/* если есть картинка — показываем её */}
-                {post.previewImage && 
+                {post.previewImage && post.previewImage.trim() !== '' && 
                 <Image 
                     rounded="md"  
                     src={post.previewImage} 

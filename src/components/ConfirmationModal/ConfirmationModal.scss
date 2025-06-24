@@ -1,23 +1,41 @@
-/* стили для модального окна подтверждения */
-.confirmation-modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 10000;
+.confirmation-modal {
+  max-width: 28rem;
+  margin: 0 auto;
+  margin-top: 20vh;
+  padding: 1.5rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
 }
 
-.confirmation-modal-content {
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-  max-width: 400px;
-  width: 90%;
-  max-height: 90vh;
-  overflow-y: auto;
+.confirmation-header {
+  padding-bottom: 1rem;
+}
+
+.confirmation-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.confirmation-body {
+  padding: 1rem 0;
+}
+
+.confirmation-message {
+  font-size: 1rem;
+  line-height: 1.6;
+}
+
+.confirmation-footer {
+  padding-top: 1.5rem;
+}
+
+.confirmation-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: flex-end;
+  width: 100%;
+}
+
+.confirmation-button {
+  min-width: 100px;
 } 

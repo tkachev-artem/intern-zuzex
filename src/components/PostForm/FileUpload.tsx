@@ -60,15 +60,15 @@ export const PhotoPreviewUpload = ({ image, setImage, setIsLoading }: PhotoUploa
   return (
     <FileUpload.Root
       key={image ? 'with-image' : 'no-image'}
-      maxW="xl"
-      alignItems="stretch"
+      maxW="100%"
+      alignItems="center"
       maxFiles={1}
       onFileAccept={handleFileUpload}
     >
       
       {/* область для перетаскивания файлов */}
       <FileUpload.Dropzone>
-        <Heading size="md">Перетащите изображения сюда для загрузки</Heading>
+        <Heading size="md" padding={2}>Перетащите изображения сюда для загрузки</Heading>
         <Text color="fg.muted">.png, .jpg до 5MB</Text>
       </FileUpload.Dropzone>
       
