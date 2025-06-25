@@ -1,7 +1,8 @@
 .post {
   max-width: 100%;
   margin: 0 auto;
-  padding: 24px;
+  padding-top: 24px;
+  padding-bottom: 24px;
 }
 
 .post-form {
@@ -122,4 +123,12 @@
   overflow-x: auto;
 } 
 
- 
+.filter-bar-container {
+  display: flex;
+  position: fixed;
+  top: 62px;
+  left: 24px;
+  z-index: 1000;
+  justify-content: flex-end;
+  margin-top: 24px;
+}

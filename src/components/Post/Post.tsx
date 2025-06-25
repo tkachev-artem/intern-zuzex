@@ -107,9 +107,12 @@ const Post = () => {
   return (
     <div className="post">
       {/* <button onClick={() => dispatch(loadPosts())}>Restore Post</button> (загрузка постов из локального хранилища по кнопке) */}
-      <FilterBar direction={direction} setDirection={setDirection} />
+
+      <div className="filter-bar-container">
+        <FilterBar direction={direction} setDirection={setDirection} />
+      </div>
       
-      <Flex direction="column" gap="4" justify="center" align="center">
+      <Flex direction="column" gap="4" justify="center" align="center" paddingLeft="144px">
         {/* рендерим карточки для каждого поста */}
         {filteredPosts.map(post => (
           <PostCard 

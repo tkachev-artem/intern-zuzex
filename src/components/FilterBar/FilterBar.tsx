@@ -22,7 +22,7 @@ export const FilterBar = ({ direction, setDirection }: FilterBarProps) => {
     return (
         <Menu.Root closeOnSelect={false}>
       <Menu.Trigger asChild>
-        <Button variant="outline" size="sm">
+        <Button variant="outline" size="lg" paddingInline="16px">
           <HiFilter /> Фильтры
         </Button>
       </Menu.Trigger>

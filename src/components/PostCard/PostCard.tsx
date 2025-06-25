@@ -170,7 +170,7 @@ export const PostCard = ({ post, onEditPost, FullPostOpen }: PostCardProps) => {
                         {post.content.length > 500 ? post.content.slice(0, 500) + '...' : post.content}
                         </ReactMarkdown>
 
-                        <Button variant="outline" size="md" marginLeft={4} paddingInline={4} onClick={handleNavigateToPost}>
+                        <Button variant="outline" size="md" marginTop="12px" paddingInline={4} onClick={handleNavigateToPost}>
                             <Text textStyle="md">Читать далее</Text>
                         </Button>
                         </>
@@ -196,8 +196,9 @@ export const PostCard = ({ post, onEditPost, FullPostOpen }: PostCardProps) => {
                     src={post.previewImage} 
                     alt="Изображение к посту"
                     w="100%"
-                    h="350px"
+                    maxH="800px"
                     fit="cover"
+                    loading="lazy"
                 />}
             </Card.Body>
 

@@ -16,7 +16,7 @@ const Home = () => {
         header={<HomeNavbar />}
       >
         <Page.Root>
-            <Page.Body maxW="none" px="0">
+            <Page.Body maxW="none" px="0" paddingInline="24px">
                 <Post />
             </Page.Body>
         </Page.Root>
