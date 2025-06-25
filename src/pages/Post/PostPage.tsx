@@ -1,6 +1,6 @@
 'use client'
 
-import { useAppSelector } from '@/app/hooks';
+import { useAppDispatch, useAppSelector } from '@/app/hooks';
 import { HomeNavbar } from '@/components/Navbar/Navbar'
 import PostCard from '@/components/PostCard/PostCard'
 import { PostForm } from '@/components/PostForm/PostForm';
@@ -10,9 +10,9 @@ import {
   Page
 } from '@saas-ui/react'
 import { Dialog } from '@saas-ui/react';
-import { useParams } from 'react-router-dom';
-import { useState } from 'react';
-import type { Post } from '@/features/posts/postSlice';
+import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { loadPosts, type Post } from '@/features/posts/postSlice';
 
 // Модальное окно для редактирования поста
 type EditPostModalProps = {
@@ -20,8 +20,10 @@ type EditPostModalProps = {
   onClose: () => void;
   editingPost: Post | null;
 };
+  
 
 const EditPostModal = ({ isOpen, onClose, editingPost }: EditPostModalProps) => {
+
   if (!editingPost) return null;
 
   const handlePostUpdated = () => {
@@ -51,14 +53,21 @@ const EditPostModal = ({ isOpen, onClose, editingPost }: EditPostModalProps) => 
 
 const PostPage = () => {
     const posts = useAppSelector((state) => state.posts);
-    const { id } = useParams();
+    const dispatch = useAppDispatch();
     const [isEditModalOpen, setIsEditModalOpen] = useState<boolean>(false);
     const [editingPost, setEditingPost] = useState<Post | null>(null);
 
-    const post = posts.find((post) => post.id === id);
+    useEffect(() => {
+        dispatch(loadPosts());
+    }, [dispatch]);
 
+    const location = useLocation();
+    const postId = location.pathname.split('/').pop(); //получаем id поста из url
+
+    const post = posts.find((post) => post.id === String(postId)); //ищем пост по id
+    
     if (!post) {
-        return <div>Пост не найден</div>
+        return <div>Пост не найден</div> 
     }
 
     const handleEditPost = (post: Post) => {

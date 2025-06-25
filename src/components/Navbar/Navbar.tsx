@@ -1,16 +1,18 @@
 'use client'
 
-import { Link, Button } from '@chakra-ui/react'
+import { Button } from '@chakra-ui/react'
 import { Tabs, Dialog } from '@saas-ui/react'
 import { Navbar } from '@saas-ui/react'
 import './styles/Navbar.scss'
 import '../Dialog/Dialog.scss'
 import DropdownMenu from '../DropdownMenu/DropdownMenu'
-import { LuFileHeart, LuRows3, LuCirclePlus } from "react-icons/lu"
+import { LuRows3, LuCirclePlus } from "react-icons/lu"
 import { PostForm } from '../PostForm/PostForm'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 
 export const HomeNavbar = () => {
+  const navigate = useNavigate();
   const [isPostModalOpen, setModalOpen] = useState(false);
 
   const handleOpenPostModal = () => { // открываем модальное окно для создания поста
@@ -25,19 +27,14 @@ export const HomeNavbar = () => {
     <Navbar.Root className="navbar-root">
       <Navbar.Content className="navbar-content">
         <Navbar.Item className="navbar-tabs">
-          <Tabs.Root defaultValue="feed" variant="plain"> {/* Лента и избранное */}
+          <Tabs.Root variant="plain" defaultValue="/"> {/* Лента и избранное */}
             <Tabs.List bg="bg.muted" rounded="l3" p="1" className="tabs-list"> 
-              <Tabs.Trigger value="feed" className="tab-trigger" asChild> 
-                <Link unstyled href="#feed"> {/* Лента */}
+              <Tabs.Trigger value="/" className="tab-trigger" asChild> 
+                <Button variant="ghost" size="lg" rounded="full" aria-label="Лента" onClick={() => void navigate('/')}> {/* Лента */}
                   <LuRows3 size={20} />
                   Лента
-                </Link>
-              </Tabs.Trigger>
-              <Tabs.Trigger value="favorites" className="tab-trigger" asChild> 
-                <Link unstyled href="#favorites"> {/* Избранное */}
-                  <LuFileHeart size={20} />
-                  Избранное
-                </Link>
+                </Button>
+
               </Tabs.Trigger>
               <Tabs.Indicator rounded="l2" />
             </Tabs.List>
