@@ -7,11 +7,9 @@ import { validators } from "@/components/ErrorMessage/ErrorMessage"
 
 // импортируем функции для работы с localStorage
 import { 
-  addUser, 
-  isNicknameUnique, 
-  isEmailUnique, 
+  authLocalAPI,
   type StoredUser 
-} from "@/middleware"
+} from "@/LocalAPI"
 
 // тип для данных формы регистрации
 type SignUpType = {
@@ -127,7 +125,7 @@ export const registrationSlice = createAppSlice({
         
         // если ник не уникален — ошибка
         if (!nicknameError && action.payload.trim()) {
-          if (!isNicknameUnique(action.payload)) {
+          if (!authLocalAPI.isNicknameUnique(action.payload)) {
             nicknameError = "Никнейм уже занят"
           }
         }
@@ -154,7 +152,7 @@ export const registrationSlice = createAppSlice({
         
         // если email не уникален — ошибка
         if (!emailError && action.payload.trim()) {
-          if (!isEmailUnique(action.payload)) {
+          if (!authLocalAPI.isEmailUnique(action.payload)) {
             emailError = "Email уже занят"
           }
         }
@@ -236,6 +234,8 @@ export const registrationSlice = createAppSlice({
       },
     ),
 
+
+
     // валидируем всю форму
     validateForm: create.reducer((state: RegistrationState) => {
       state.errors.name = validators.validateName(state.form.name)
@@ -275,7 +275,7 @@ export const registrationSlice = createAppSlice({
     submitRegistration: create.reducer((state: RegistrationState) => {
       try {
         // если ник не уникален — ошибка
-        if (!isNicknameUnique(state.form.nickname)) {
+        if (!authLocalAPI.isNicknameUnique(state.form.nickname)) {
           state.registrationMessage = `Ошибка: никнейм ${state.form.nickname} уже занят`
           state.errors.nickname = "Никнейм уже занят"
           console.error("Ошибка регистрации: никнейм уже существует")
@@ -283,7 +283,7 @@ export const registrationSlice = createAppSlice({
         }
 
         // если email не уникален — ошибка
-        if (!isEmailUnique(state.form.email)) {
+        if (!authLocalAPI.isEmailUnique(state.form.email)) {
           state.registrationMessage = `Ошибка: email ${state.form.email} уже занят`
           state.errors.email = "Email уже занят"
           console.error("Ошибка регистрации: email уже существует")
@@ -293,6 +293,8 @@ export const registrationSlice = createAppSlice({
         // создаём нового пользователя
         const newUser: StoredUser = {
           id: generateUserId(),
+          firstName: state.form.name,
+          lastName: state.form.lastname,
           nickname: state.form.nickname,
           password: state.form.password,
           role: state.form.role,
@@ -301,7 +303,7 @@ export const registrationSlice = createAppSlice({
         }
 
         // добавляем пользователя в localStorage
-        const success = addUser(newUser)
+        const success = authLocalAPI.createUser(newUser)
 
         if (success) {
           state.isRegistrationComplete = true
@@ -332,7 +334,7 @@ export const registrationSlice = createAppSlice({
     // очистка сообщения о регистрации
     clearRegistrationMessage: create.reducer((state: RegistrationState) => {
       state.registrationMessage = null
-    }),
+    })
   }),
 
   // селекторы для получения данных из состояния
@@ -348,6 +350,12 @@ export const registrationSlice = createAppSlice({
     selectRole: (state: RegistrationState) => state.form.role,
     selectErrors: (state: RegistrationState) => state.errors,
     selectForm: (state: RegistrationState) => state.form,
+    selectUserInfo: (state: RegistrationState) => {
+      return {
+        name: state.form.name,
+        lastname: state.form.lastname,
+      }
+    },
 
     // проверка, что форма полностью валидна
     selectFormValidateSuccessfully: (state: RegistrationState) => {
@@ -425,6 +433,7 @@ export const {
   selectFormFourthStep,
   selectIsRegistrationComplete,
   selectRegistrationMessage,
+  selectUserInfo, // получаем имя и фамилию пользователя
 } = registrationSlice.selectors
 
 export default registrationSlice.reducer

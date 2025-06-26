@@ -1,15 +1,16 @@
 import { registrationSlice } from "@/features/registration/registrationSlice"
 import { authSlice } from "@/features/auth/authSlice"
 import { postSlice } from "@/features/posts/postSlice"
+import { profileSlice } from "@/features/profile/profileSlice"
+import { projectSlice } from "@/features/projects/projectSlice"
 
 import type { Action, ThunkAction } from "@reduxjs/toolkit"
 import { combineSlices, configureStore } from "@reduxjs/toolkit"
 import { setupListeners } from "@reduxjs/toolkit/query"
 
-// Middleware для автоматической синхронизации с localStorage
-import { storageMiddlewares } from "@/middleware"
+// LocalAPI используется напрямую в слайсах, middleware больше не нужны
 
-const rootReducer = combineSlices(registrationSlice, authSlice, postSlice)
+const rootReducer = combineSlices(registrationSlice, authSlice, postSlice, profileSlice, projectSlice)
 
 export type RootState = ReturnType<typeof rootReducer>
 
@@ -19,9 +20,7 @@ export const makeStore = (preloadedState?: Partial<RootState>) => {
 
     // Добавление middleware включает кеширование, инвалидацию, polling
     // и другие полезные функции RTK Query
-    middleware: getDefaultMiddleware => {
-      return getDefaultMiddleware().concat(...storageMiddlewares)
-    },
+    middleware: getDefaultMiddleware => getDefaultMiddleware(),
 
     // Применяем предзагруженное состояние если оно передано
     ...(preloadedState && { preloadedState }),

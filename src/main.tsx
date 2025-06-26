@@ -7,10 +7,10 @@ import { App } from "./App"
 import "./index.css"
 
 // Инициализация localStorage с тестовыми пользователями
-import { initializeDefaultUsers } from "./middleware"
+import { authLocalAPI } from "./LocalAPI"
 
 // Инициализируем localStorage при запуске приложения
-initializeDefaultUsers()
+authLocalAPI.createDefaultUsers()
 
 const container = document.getElementById("root")
 

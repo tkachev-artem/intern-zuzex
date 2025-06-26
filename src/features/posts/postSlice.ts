@@ -1,6 +1,6 @@
 import { createAppSlice } from "@/app/createAppSlice"
 import type { PayloadAction } from "@reduxjs/toolkit";
-import { loadPostsFromStorage, savePostsToStorage } from "@/middleware";
+import { postLocalAPI } from "@/LocalAPI";
 
 // типы постов
 export type Post = {
@@ -15,7 +15,7 @@ export type Post = {
     previewImage?: string;
 }
 
-const initialState: Post[] = [];
+const initialState: Post[] = postLocalAPI.getPosts();
 
 const postSlice = createAppSlice({ //создание слайса постов
     name: "posts",
@@ -25,7 +25,8 @@ const postSlice = createAppSlice({ //создание слайса постов
         makePost: create.reducer( //создание поста
             (state: Post[], action: PayloadAction<Post>) => {
                 state.push(action.payload);
-                savePostsToStorage(state);
+                // Используем LocalAPI для сохранения
+                postLocalAPI.createPost(action.payload);
             }
         ),
         //редьюсер для лайка поста по пользователю
@@ -48,7 +49,8 @@ const postSlice = createAppSlice({ //создание слайса постов
                         post.likes -= 1;
                     }
 
-                    savePostsToStorage(state);
+                    // Используем LocalAPI для обновления
+                    postLocalAPI.updatePost(post);
                 }
             }
         ),
@@ -61,7 +63,8 @@ const postSlice = createAppSlice({ //создание слайса постов
                 
                 if (postIndex !== -1) {
                     state.splice(postIndex, 1);
-                    savePostsToStorage(state);
+                    // Используем LocalAPI для удаления
+                    postLocalAPI.deletePost(postId);
                 }
             }
         ),
@@ -74,14 +77,16 @@ const postSlice = createAppSlice({ //создание слайса постов
                 
                 if (postIndex !== -1) {
                     state[postIndex] = updatedPost;
-                    savePostsToStorage(state);
+                    // Используем LocalAPI для обновления
+                    postLocalAPI.updatePost(updatedPost);
                 }
             }
         ),
 
         loadPosts: create.reducer( //загрузка постов из локального хранилища
             (state: Post[]) => {
-                const posts = loadPostsFromStorage();
+                // Используем LocalAPI для загрузки
+                const posts = postLocalAPI.getPosts();
                 state.length = 0;
                 state.push(...posts);
             }

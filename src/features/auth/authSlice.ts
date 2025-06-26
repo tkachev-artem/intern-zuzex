@@ -6,7 +6,7 @@ import type { PayloadAction } from "@reduxjs/toolkit"
 import { authValidators } from "@/components/ErrorMessage/authValidators"
 
 // импорт для работы с localStorage
-import { findUserByNickname } from "@/middleware"
+import { authLocalAPI } from "@/LocalAPI"
 
 // тип для состояния пользователя
 type UserState = {
@@ -87,9 +87,12 @@ const authSlice = createAppSlice({
 
     // логин пользователя через localStorage
     loginUser: create.reducer((state: AuthState) => {
-      const storedUser = findUserByNickname(state.form.nickname)
+      const storedUser = authLocalAPI.getUserByNickname(state.form.nickname)
 
       if (storedUser && storedUser.password === state.form.password) {
+        // сохраняем авторизацию в localStorage
+        authLocalAPI.login(state.form.nickname, state.form.password)
+        
         state.userState.isAuthenticated = true
         state.userState.user = {
           id: storedUser.id,
@@ -141,7 +144,7 @@ const authSlice = createAppSlice({
         const { nickname } = action.payload
         
         // ищем пользователя по нику
-        const storedUser = findUserByNickname(nickname)
+        const storedUser = authLocalAPI.getUserByNickname(nickname)
         
         if (storedUser) {
           state.userState.isAuthenticated = true

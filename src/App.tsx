@@ -3,12 +3,13 @@ import Home from "./pages/Home/Home"
 import "./App.css"
 import Auth from "./pages/Auth/Auth"
 
-import { initializeDefaultUsers, loadFromStorage } from "./middleware"
+import { authLocalAPI, storageLocalAPI } from "./LocalAPI"
 import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from "./app/hooks"
 import { restoreUser, selectIsAuthenticated } from "./features/auth/authSlice"
 import { ProtectedRoute } from "./components/RouteGuard/RouteGuard"
 import PostPage from "./pages/Post/PostPage"
+import { Profile } from "./pages/Profile/Profile"
 
 export const App = () => {
   const dispatch = useAppDispatch()
@@ -17,16 +18,14 @@ export const App = () => {
 
   // инициализация приложения
   useEffect(() => {
-    // создаем тестовых пользователей если их нет
-    initializeDefaultUsers()
+    authLocalAPI.createDefaultUsers() //тестовая пачка пользователей
     
-    // восстанавливаем сессию пользователя из localStorage
-    const userAuthLS = loadFromStorage()?.auth
-    if (userAuthLS?.isAuthenticated && userAuthLS.user) {
-      dispatch(restoreUser({ nickname: userAuthLS.user }))
+    //сесия
+    const userAuthSession = storageLocalAPI.getStorageData()?.auth
+    if (userAuthSession?.isAuthenticated && userAuthSession.user) {
+      dispatch(restoreUser({ nickname: userAuthSession.user }))
     }
     
-    // отмечаем что инициализация завершена
     setIsInitialized(true)
   }, [dispatch])
 
@@ -71,6 +70,10 @@ export const App = () => {
         />
         
         {/* профиль пользователя */}
+        <Route 
+          path="/:profileId"
+          element={<Profile />}
+        />
 
         {/* перенаправление с любых других роутов на главную */}
         <Route path="*" element={<Navigate to="/" replace />} />
