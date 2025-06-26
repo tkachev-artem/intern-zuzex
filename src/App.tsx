@@ -69,9 +69,19 @@ export const App = () => {
           element={<PostPage />} 
         />
         
-        {/* профиль пользователя */}
+        {/* мой профиль */}
         <Route 
-          path="/:profileId"
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
+            </ProtectedRoute>
+          }
+        />
+        
+        {/* профиль пользователя по username */}
+        <Route 
+          path="/:username"
           element={<Profile />}
         />
 

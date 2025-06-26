@@ -1,6 +1,7 @@
 // используем общий storage для пользователей
 import type { StoredUser } from "@/LocalAPI/storage/storageLocalAPI";
 import { storageLocalAPI } from "@/LocalAPI/storage/storageLocalAPI";
+import type { Project } from "@/features/projects/projectSlice";
 
 // функция получения всех пользователей (read)
 const getUsers = (): StoredUser[] => {
@@ -147,6 +148,7 @@ const createDefaultUsers = (): void => {
         role: "Frontend Developer",
         email: "tkachev@developer.com",
         createdAt: new Date().toISOString(),
+        portfolio: [], // изначально у пользователя нет проектов
       },
     ];
 
@@ -183,6 +185,58 @@ const login = (nickname: string, password: string): boolean => {
   return true;
 };
 
+// функция добавления проекта в портфолио пользователя
+const addProjectToUserPortfolio = (userNickname: string, project: Project): boolean => {
+  const users = getUsers();
+  const userIndex = users.findIndex(user => user.nickname === userNickname);
+  
+  if (userIndex === -1) {
+    console.log(`пользователь ${userNickname} не найден`);
+    return false;
+  }
+
+  // Добавляем проект в портфолио пользователя
+  users[userIndex].portfolio.push(project);
+  
+  // Получаем текущие данные для сохранения
+  const currentData = storageLocalAPI.getStorageData();
+  storageLocalAPI.saveStorageData(
+    users,
+    currentData?.auth.isAuthenticated ?? false,
+    currentData?.auth.user ?? "",
+    currentData?.posts ?? [],
+    currentData?.projects ?? []
+  );
+  
+  return true;
+};
+
+// функция удаления проекта из портфолио пользователя
+const removeProjectFromUserPortfolio = (userNickname: string, projectId: string): boolean => {
+  const users = getUsers();
+  const userIndex = users.findIndex(user => user.nickname === userNickname);
+  
+  if (userIndex === -1) {
+    console.log(`пользователь ${userNickname} не найден`);
+    return false;
+  }
+
+  // Удаляем проект из портфолио пользователя
+  users[userIndex].portfolio = users[userIndex].portfolio.filter(project => project.id !== projectId);
+  
+  // Получаем текущие данные для сохранения
+  const currentData = storageLocalAPI.getStorageData();
+  storageLocalAPI.saveStorageData(
+    users,
+    currentData?.auth.isAuthenticated ?? false,
+    currentData?.auth.user ?? "",
+    currentData?.posts ?? [],
+    currentData?.projects ?? []
+  );
+  
+  return true;
+};
+
 // экспорт функций
 export const authLocalAPI = {
   getUsers,
@@ -195,4 +249,6 @@ export const authLocalAPI = {
   updateLastLogin,
   createDefaultUsers,
   login,
+  addProjectToUserPortfolio,
+  removeProjectFromUserPortfolio,
 };

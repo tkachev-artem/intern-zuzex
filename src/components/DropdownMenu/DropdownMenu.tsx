@@ -39,7 +39,6 @@ export const DropdownMenu = () => {
       </Menu.Trigger>
       <Menu.Content className="dropdown-menu-content">
         <Menu.Item value="profile" className='text'>Профиль</Menu.Item>
-        <Menu.Item value="settings" className='text'>Настройки</Menu.Item>
         <Menu.Item value="logout" className='logout-text'>Выйти</Menu.Item>
       </Menu.Content>
     </Menu.Root>

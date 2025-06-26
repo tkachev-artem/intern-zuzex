@@ -300,6 +300,7 @@ export const registrationSlice = createAppSlice({
           role: state.form.role,
           email: state.form.email,
           createdAt: new Date().toISOString(),
+          portfolio: [], // изначально у пользователя нет проектов
         }
 
         // добавляем пользователя в localStorage

@@ -2,6 +2,7 @@ import { createAppSlice } from "@/app/createAppSlice";
 import type { PayloadAction } from "@reduxjs/toolkit";
 import type { Project } from "../projects/projectSlice";
 import { storageLocalAPI } from "@/LocalAPI/storage/storageLocalAPI";
+import { authLocalAPI } from "@/LocalAPI/auth/authLocalAPI";
 
 type UserProfile = {
     id: string;
@@ -41,10 +42,22 @@ const profileSlice = createAppSlice({
                 state.role = user.role;
                 state.description = user.description ?? "";
                 state.workplace = user.workplace ?? "";
-                state.portfolio = [];
-                
-                console.log("Профиль загружен:", user);
+                state.portfolio = user.portfolio;
+            }
+        ),
 
+        getProfileByNickname: create.reducer(
+            (state: UserProfile, action: PayloadAction<string>) => {
+
+                const user = storageLocalAPI.getProfileByNickname(action.payload);
+                state.id = user.id;
+                state.firstName = user.firstName;
+                state.lastName = user.lastName;
+                state.nickname = user.nickname;
+                state.role = user.role;
+                state.description = user.description ?? "";
+                state.workplace = user.workplace ?? "";
+                state.portfolio = user.portfolio;
             }
         ),
 
@@ -57,6 +70,40 @@ const profileSlice = createAppSlice({
         addDescription: create.reducer(
             (state: UserProfile, action: PayloadAction<string>) => {
                 state.description = action.payload;
+            }
+        ),
+
+        updateProfile: create.reducer(
+            (state: UserProfile, action: PayloadAction<Partial<UserProfile>>) => {
+                Object.assign(state, action.payload);
+                
+                const updatedUser = {
+                    id: state.id,
+                    nickname: state.nickname,
+                    firstName: state.firstName,
+                    lastName: state.lastName,
+                    password: authLocalAPI.getUserByNickname(state.nickname)?.password ?? "",
+                    role: state.role,
+                    email: authLocalAPI.getUserByNickname(state.nickname)?.email ?? "",
+                    createdAt: authLocalAPI.getUserByNickname(state.nickname)?.createdAt ?? "",
+                    description: state.description,
+                    workplace: state.workplace,
+                    portfolio: state.portfolio
+                };
+                
+                authLocalAPI.updateUser(updatedUser);
+            }
+        ),
+
+        addProjectToPortfolio: create.reducer(
+            (state: UserProfile, action: PayloadAction<Project>) => {
+                state.portfolio.push(action.payload);
+            }
+        ),
+
+        removeProjectFromPortfolio: create.reducer(
+            (state: UserProfile, action: PayloadAction<string>) => {
+                state.portfolio = state.portfolio.filter(project => project.id !== action.payload);
             }
         )
     }),
@@ -74,7 +121,7 @@ const profileSlice = createAppSlice({
     }
 })
 
-export const { getProfile, addWorkplace, addDescription } = profileSlice.actions;
+export const { getProfile, getProfileByNickname, addWorkplace, addDescription, updateProfile, addProjectToPortfolio, removeProjectFromPortfolio } = profileSlice.actions;
 export const { selectProfile, selectProfileID, selectProfileFirstName, selectProfileLastName, selectProfileNickname, selectProfileRole, selectProfileDescription, selectProfileWorkplace, selectProfilePortfolio } = profileSlice.selectors;
 export { profileSlice };
 export type { UserProfile };

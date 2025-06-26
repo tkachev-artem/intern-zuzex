@@ -1,14 +1,15 @@
 .portfolio-block {
   width: 100%;
-  padding: 24px;
+  padding-inline: 20px;
+  align-items: center;
+  justify-items: center;
 }
 
 .portfolio-header {
-  margin-bottom: 32px;
   text-align: center;
   
   @media (min-width: 768px) {
-    text-align: left;
+    text-align: center;
   }
 }
 
@@ -25,8 +26,9 @@
 .portfolio-empty {
   color: #888;
   font-size: 16px;
-  font-style: italic;
   padding: 40px;
+  margin-top: 20px;
+  margin-bottom: 20px;
   text-align: center;
   background: #f9f9f9;
   border-radius: 12px;
@@ -35,9 +37,11 @@
 
 .portfolio-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   width: 100%;
+  padding-top: 20px;
+  padding-bottom: 20px;
   margin: 0 auto;
   
   // Адаптивность для разных экранов
@@ -47,15 +51,10 @@
     padding: 0 10px;
   }
   
-  @media (min-width: 769px) and (max-width: 1200px) {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-    gap: 18px;
-  }
-  
-  @media (min-width: 1201px) {
-    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-    gap: 24px;
-    max-width: 1400px;
+  @media (min-width: 769px) {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+    max-width: 800px;
   }
 }
 

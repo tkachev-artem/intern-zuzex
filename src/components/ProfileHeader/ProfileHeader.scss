@@ -1,17 +1,18 @@
-.card {
-    max-width: 400px;
+.profile-card {
+    min-width: 400px;
     margin: 20px auto;
+    
 }
 
-.card-body {
+.profile-card-body {
     padding: 24px;
     display: flex;
     flex-direction: column;
     gap: 16px;
-    text-align: center;
+    min-width: 800px;
 }
 
-.actions {
+.profile-actions {
     position: absolute;
     top: 10px;
     right: 10px;

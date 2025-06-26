@@ -1,8 +1,12 @@
-import { Button, Text, Image } from '@chakra-ui/react'
+import { Button, Text, Image, HStack, IconButton } from '@chakra-ui/react'
 import { Card } from '@saas-ui/react'
 import { HiExternalLink, HiCode } from 'react-icons/hi'
 import type { Project } from '@/features/projects/projectSlice'
 import './ProjectCard.scss'
+import { LuPencil } from 'react-icons/lu'
+import { useLocation } from 'react-router-dom'
+import { useAppSelector } from '@/app/hooks'
+import { selectUser } from '@/features/auth/authSlice'
 
 type ProjectCardProps = {
   project: Project
@@ -11,9 +15,29 @@ type ProjectCardProps = {
 }
 
 export const ProjectCard = ({ project, onDelete, showActions = false }: ProjectCardProps) => {
+
+  const location = useLocation();
+  const currentUser = useAppSelector(selectUser)
+  const isMyProfile = location.pathname === '/profile';
+  const nickname = isMyProfile ? currentUser?.nickname : location.pathname.split('/').pop(); 
+  const isAuthor = isMyProfile || currentUser?.nickname === nickname;
   
   return (
     <Card.Root className="project-card">
+      <Card.Header>
+      {isAuthor && (
+              <HStack gap="1" className="profile-actions">
+                  <IconButton
+                      variant="ghost"
+                      size="sm"
+                      aria-label="Добавить проект"
+                      //onClick={handleAddProject}
+                  >
+                    <LuPencil size={16}/>
+                  </IconButton>
+              </HStack>
+          )}
+      </Card.Header>
       <Card.Body className="project-card-body">
         {/* Превью изображения */}
         {project.previewImage && (

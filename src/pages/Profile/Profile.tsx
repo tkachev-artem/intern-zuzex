@@ -1,73 +1,60 @@
-import { Button } from "@chakra-ui/react"
+import { Stack } from "@chakra-ui/react"
 import { useAppDispatch, useAppSelector } from "@/app/hooks"
 import { useEffect } from "react";
-import { useLocation } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
-import { getProfile, addWorkplace, addDescription } from "@/features/profile/profileSlice"; // для получения профиля
+import { getProfile, getProfileByNickname, selectProfile } from "@/features/profile/profileSlice"; // для получения профиля
 import { selectUser } from "@/features/auth/authSlice"; // для получения пользователя
-import { deleteProject, makeProject } from "@/features/projects/projectSlice";
 import { ProfileHeader } from "@/components/ProfileHeader/ProfileHeader";
 import { PortfolioBlock } from "@/components/PortfolioBlock/PortfolioBlock";
+
+import { HomeNavbar } from "@/components/Navbar/Navbar";
 
 export const Profile = () => {
 
     const dispatch = useAppDispatch();
+    const { username } = useParams(); // получаем username из URL
+    const location = useLocation();
 
-    const user = useAppSelector(selectUser);
-    console.log("Авторизованный пользователь: ", user);
+    const currentUser = useAppSelector(selectUser); // авторизованный пользователь
+    const profileData = useAppSelector(selectProfile); // данные профиля для отображения
+    
+    // Определяем чей это профиль
+    const isMyProfile = location.pathname === '/profile';
+    const targetNickname = isMyProfile ? currentUser?.nickname : username;
+    const isAuthor = isMyProfile || currentUser?.nickname === targetNickname;
 
     // Загружаем профиль при инициализации компонента
     useEffect(() => {
-        if (user?.id) {
-            dispatch(getProfile(user.id));
+        if (isMyProfile && currentUser?.id) {
+            // Если это мой профиль - загружаем по ID
+            dispatch(getProfile(currentUser.id));
+        } else if (username) {
+            // Если это профиль другого пользователя - загружаем по nickname
+            try {
+                dispatch(getProfileByNickname(username));
+            } catch (error) {
+                console.error(`Ошибка загрузки профиля пользователя ${username}:`, error);
+            }
         }
-    }, [user?.id, dispatch]);
-
-    const location = useLocation();
-
-    const isMyProfile = location.pathname === '/profile';
-    const profileNickname = isMyProfile ? user?.nickname : location.pathname.split('/').pop(); 
-    const isAuthor = isMyProfile || user?.nickname === profileNickname;
+    }, [isMyProfile, currentUser?.id, username, dispatch]);
 
     return (
         <div>
-            <h1>Profile</h1>
-            <ProfileHeader />
+            <HomeNavbar />
 
-            {/* Блок портфолио */}
-            <PortfolioBlock 
-                userId={user?.id} 
-                showActions={isAuthor}
-                title="Мои проекты"
-            />
+            <Stack>
 
-            {/* Кнопки для тестирования */}
-            <div style={{ padding: '20px', display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
-                <Button onClick={() => {
-                    dispatch(makeProject({
-                        id: `project_${Date.now().toString()}`,
-                        title: "Тестовый проект",
-                        description: "Описание тестового проекта для демонстрации портфолио",
-                        links: ["https://github.com/test/project", "https://project-demo.com"],
-                        previewImage: "https://i.pinimg.com/originals/19/89/44/198944ea9f57d70ea850fc868efbd4b6.jpg",
-                    }));
-                }}>
-                    Создать проект
-                </Button>
+                {/* Блок профиля */}
+                <ProfileHeader />
 
-                <Button onClick={() => {
-                        dispatch(deleteProject("1"));
-                }}>
-                    Удалить проект
-                </Button>
-
-                <Button onClick={() => {
-                    dispatch(addWorkplace("Место работы"));
-                    dispatch(addDescription("Описание профиля"));
-                }}>
-                    Добавить данные в профиль
-                </Button>
-            </div>
+                {/* Блок портфолио */}
+                <PortfolioBlock 
+                    userId={profileData.id} 
+                    showActions={isAuthor}
+                    title={isMyProfile ? "Мои проекты" : "Проекты"}
+                />
+            </Stack>
         </div>
     )
 }

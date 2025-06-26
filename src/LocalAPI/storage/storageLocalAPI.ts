@@ -14,6 +14,7 @@ export type StoredUser = {
   lastLoginAt?: string // когда последний раз заходил (может быть пусто)
   description?: string // описание пользователя
   workplace?: string   // место работы
+  portfolio: Project[] // портфолио проектов пользователя
 }
 
 // тип авторизации, который мы храним
@@ -55,7 +56,7 @@ const getStorageData = (): LocalStorageData | null => {
   return parsed;
 };
 
-// функция получения данных профиля
+// функция получения данных профиля по ID
 const getProfile = (userID: string) : StoredUser => {
   const data = getStorageData();
   const user = data?.users.find(user => user.id === userID);
@@ -64,6 +65,17 @@ const getProfile = (userID: string) : StoredUser => {
   }
   return user;
 }
+
+// функция получения данных профиля по nickname
+const getProfileByNickname = (nickname: string) : StoredUser => {
+  const data = getStorageData();
+  const user = data?.users.find(user => user.nickname === nickname);
+  if (!user) {
+    throw new Error(`Пользователь ${nickname} не найден`);
+  }
+  return user;
+}
+
 
 // функция создания/сохранения данных в localStorage (create/update)
 const saveStorageData = (
@@ -121,4 +133,5 @@ export const storageLocalAPI = {
   updateStorageData,
   clearStorageData,
   getProfile,
+  getProfileByNickname,
 }; 
