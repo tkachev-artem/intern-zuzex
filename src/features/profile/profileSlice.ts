@@ -101,6 +101,14 @@ const profileSlice = createAppSlice({
             }
         ),
 
+        updateProjectInPortfolio: create.reducer(
+            (state: UserProfile, action: PayloadAction<Project>) => {
+                const index = state.portfolio.findIndex(project => project.id === action.payload.id);
+                if (index !== -1) {
+                    state.portfolio[index] = action.payload;
+                }
+            }
+        ),
         removeProjectFromPortfolio: create.reducer(
             (state: UserProfile, action: PayloadAction<string>) => {
                 state.portfolio = state.portfolio.filter(project => project.id !== action.payload);
@@ -121,7 +129,7 @@ const profileSlice = createAppSlice({
     }
 })
 
-export const { getProfile, getProfileByNickname, addWorkplace, addDescription, updateProfile, addProjectToPortfolio, removeProjectFromPortfolio } = profileSlice.actions;
+export const { getProfile, getProfileByNickname, addWorkplace, addDescription, updateProfile, addProjectToPortfolio, updateProjectInPortfolio, removeProjectFromPortfolio } = profileSlice.actions;
 export const { selectProfile, selectProfileID, selectProfileFirstName, selectProfileLastName, selectProfileNickname, selectProfileRole, selectProfileDescription, selectProfileWorkplace, selectProfilePortfolio } = profileSlice.selectors;
 export { profileSlice };
 export type { UserProfile };

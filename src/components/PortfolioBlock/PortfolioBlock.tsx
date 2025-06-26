@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Card, HStack, IconButton, Text } from '@chakra-ui/react'
 import { Dialog } from '@saas-ui/react'
 import { useAppSelector, useAppDispatch } from '@/app/hooks'
-import { deleteProject } from '@/features/projects/projectSlice'
+import { deleteProject, type Project } from '@/features/projects/projectSlice'
 import { selectUser, selectUserNickname } from '@/features/auth/authSlice'
 import { selectProfilePortfolio, removeProjectFromPortfolio } from '@/features/profile/profileSlice'
 import { authLocalAPI } from '@/LocalAPI'
@@ -21,6 +21,8 @@ type PortfolioBlockProps = {
 
 export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockProps) => {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false)
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [editingProject, setEditingProject] = useState<Project | null>(null)
   
   const dispatch = useAppDispatch()
   const portfolioProjects = useAppSelector(selectProfilePortfolio)
@@ -54,6 +56,16 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
 
   const handleCloseProjectModal = () => {
     setIsProjectModalOpen(false)
+  }
+
+  const handleEditProject = (project: Project) => {
+    setEditingProject(project)
+    setIsEditModalOpen(true)
+  }
+
+  const handleCloseEditModal = () => {
+    setIsEditModalOpen(false)
+    setEditingProject(null)
   }
 
   return (
@@ -96,6 +108,7 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
               project={project}
               showActions={showActions && currentUser?.id === userId}
               onDelete={handleDeleteProject}
+              onEdit={handleEditProject}
             />
           ))}
         </div>
@@ -114,6 +127,25 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
           </Dialog.Header>
           <Dialog.Body className="dialog-body">
             <ProjectForm onProjectUpdated={handleCloseProjectModal} />
+          </Dialog.Body>
+        </Dialog.Content>
+      </Dialog.Root>
+
+      {/* Модальное окно для редактирования проекта */}
+      <Dialog.Root open={isEditModalOpen}>
+        <Dialog.Backdrop />
+        <Dialog.Content className="dialog-modal">
+          <Dialog.Header className="dialog-header">
+            <Dialog.Title className="dialog-title">
+              Редактировать проект
+            </Dialog.Title>
+            <Dialog.CloseButton onClick={handleCloseEditModal} />
+          </Dialog.Header>
+          <Dialog.Body className="dialog-body">
+            <ProjectForm 
+              editingProject={editingProject ?? undefined} 
+              onProjectUpdated={handleCloseEditModal} 
+            />
           </Dialog.Body>
         </Dialog.Content>
       </Dialog.Root>

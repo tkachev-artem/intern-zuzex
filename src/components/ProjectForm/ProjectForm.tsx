@@ -6,9 +6,9 @@ import { Input, Textarea } from '@saas-ui/react'
 import '../PostForm/PostForm.scss'
 import { PhotoPreviewUpload } from '../PostForm/FileUpload'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
-import { makeProject, type Project } from '@/features/projects/projectSlice'
+import { makeProject, updateProject, type Project } from '@/features/projects/projectSlice'
 import { selectUserNickname, selectIsAuthenticated } from '@/features/auth/authSlice'
-import { addProjectToPortfolio } from '@/features/profile/profileSlice'
+import { addProjectToPortfolio, updateProjectInPortfolio } from '@/features/profile/profileSlice'
 import { authLocalAPI } from '@/LocalAPI'
 
 // тип пропсов для компонента формы
@@ -69,9 +69,31 @@ export const ProjectForm = ({ editingProject, onProjectUpdated }: ProjectFormPro
       return;
     }
     
-    if (isEditMode) {
-      // TODO: добавить редактирование проекта когда будет editProject action
-      console.log('Редактирование проектов пока не реализовано');
+    if (isEditMode && editingProject) {
+      // редактируем существующий проект
+      const linksArray = links
+        .split('\n')
+        .map(link => link.trim())
+        .filter(link => link.length > 0)
+
+      const updatedProject: Project = {
+        ...editingProject,
+        title,
+        description,
+        links: linksArray,
+        previewImage: image
+      };
+
+      // Обновляем проект в общем массиве проектов
+      dispatch(updateProject(updatedProject));
+      
+      // Обновляем проект в портфолио текущего пользователя
+      dispatch(updateProjectInPortfolio(updatedProject));
+      
+      // Также обновляем проект в портфолио пользователя в localStorage
+      authLocalAPI.updateProjectInUserPortfolio(userNickname, updatedProject);
+      
+      console.log('Проект успешно обновлён');
     } else {
       // создаём новый проект
       const linksArray = links
@@ -84,7 +106,7 @@ export const ProjectForm = ({ editingProject, onProjectUpdated }: ProjectFormPro
         title,
         description,
         links: linksArray,
-        previewImage: image ?? ''
+        previewImage: image
       };
 
       // Добавляем проект в общий массив проектов

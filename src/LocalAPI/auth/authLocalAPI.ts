@@ -211,6 +211,35 @@ const addProjectToUserPortfolio = (userNickname: string, project: Project): bool
   return true;
 };
 
+// функция обновления проекта в портфолио пользователя
+const updateProjectInUserPortfolio = (userNickname: string, project: Project): boolean => {
+  const users = getUsers();
+  const userIndex = users.findIndex(user => user.nickname === userNickname);
+  
+  if (userIndex === -1) {
+    console.log(`пользователь ${userNickname} не найден`);
+    return false;
+  }
+
+  // Обновляем проект в портфолио пользователя
+  const projectIndex = users[userIndex].portfolio.findIndex(p => p.id === project.id);
+  if (projectIndex !== -1) {
+    users[userIndex].portfolio[projectIndex] = project;
+  }
+  
+  // Получаем текущие данные для сохранения
+  const currentData = storageLocalAPI.getStorageData();
+  storageLocalAPI.saveStorageData(
+    users,
+    currentData?.auth.isAuthenticated ?? false,
+    currentData?.auth.user ?? "",
+    currentData?.posts ?? [],
+    currentData?.projects ?? []
+  );
+  
+  return true;
+};
+
 // функция удаления проекта из портфолио пользователя
 const removeProjectFromUserPortfolio = (userNickname: string, projectId: string): boolean => {
   const users = getUsers();
@@ -250,5 +279,6 @@ export const authLocalAPI = {
   createDefaultUsers,
   login,
   addProjectToUserPortfolio,
+  updateProjectInUserPortfolio,
   removeProjectFromUserPortfolio,
 };

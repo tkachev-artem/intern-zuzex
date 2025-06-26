@@ -11,10 +11,11 @@ import { selectUser } from '@/features/auth/authSlice'
 type ProjectCardProps = {
   project: Project
   onDelete?: (id: string) => void
+  onEdit?: (project: Project) => void
   showActions?: boolean
 }
 
-export const ProjectCard = ({ project, onDelete, showActions = false }: ProjectCardProps) => {
+export const ProjectCard = ({ project, onDelete, onEdit, showActions = false }: ProjectCardProps) => {
 
   const location = useLocation();
   const currentUser = useAppSelector(selectUser)
@@ -25,13 +26,13 @@ export const ProjectCard = ({ project, onDelete, showActions = false }: ProjectC
   return (
     <Card.Root className="project-card">
       <Card.Header>
-      {isAuthor && (
+      {isAuthor && onEdit && (
               <HStack gap="1" className="profile-actions">
                   <IconButton
                       variant="ghost"
                       size="sm"
-                      aria-label="Добавить проект"
-                      //onClick={handleAddProject}
+                      aria-label="Редактировать проект"
+                      onClick={() => { onEdit(project) }}
                   >
                     <LuPencil size={16}/>
                   </IconButton>

@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import { useAppSelector } from '@/app/hooks'
 import { selectProfileFirstName, selectProfileRole, selectProfileNickname, selectProfileLastName, selectProfileWorkplace, selectProfileDescription } from '@/features/profile/profileSlice'
+import { selectUser } from '@/features/auth/authSlice'
 import { Badge, HStack, IconButton, Stack, Text } from '@chakra-ui/react'
 import { Card, Dialog } from '@saas-ui/react'
 import { HiAtSymbol } from 'react-icons/hi'
@@ -25,10 +26,10 @@ export const ProfileHeader = () => {
   const profileDescription = useAppSelector(selectProfileDescription);
 
   const location = useLocation();
+  const currentUser = useAppSelector(selectUser); // авторизованный пользователь
 
   const isMyProfile = location.pathname === '/profile';
-  const nickname = isMyProfile ? profileNickname : location.pathname.split('/').pop(); 
-  const isAuthor = isMyProfile || profileNickname === nickname;
+  const isAuthor = isMyProfile || currentUser?.nickname === profileNickname;
 
   const handleEditProfile = () => {
     setIsEditModalOpen(true)
