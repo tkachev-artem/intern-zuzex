@@ -17,7 +17,6 @@ import { ProfileEditForm } from '../ProfileEditForm'
 export const ProfileHeader = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
 
-  //const profileID = useAppSelector(selectProfileID);
   const profileFirstName = useAppSelector(selectProfileFirstName);
   const profileLastName = useAppSelector(selectProfileLastName);
   const profileNickname = useAppSelector(selectProfileNickname);
@@ -91,7 +90,7 @@ export const ProfileHeader = () => {
       </Card.Body>
     </Card.Root>
 
-    {/* Модальное окно редактирования профиля */}
+    {/* модальное окно редактирования профиля */}
     <Dialog.Root open={isEditModalOpen}>
       <Dialog.Backdrop />
       <Dialog.Content className="dialog-modal">

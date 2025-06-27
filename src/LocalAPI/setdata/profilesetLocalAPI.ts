@@ -5,8 +5,8 @@ const defaultProfiles: StoredUser[] = [
   {
     id: "admin",
     nickname: "admin",
-    firstName: "Администратор",
-    lastName: "Системы",
+    firstName: "Админи",
+    lastName: "Админов",
     password: "admin123",
     role: "Администратор",
     email: "admin@example.com",
@@ -27,36 +27,45 @@ const defaultProfiles: StoredUser[] = [
     description: "Начинающий Frontend-разработчик. Изучаю React, TypeScript, Redux и современные технологии веб-разработки.",
     workplace: 'ИОТ ДГТУ "Школа Икс"',
     portfolio: [
-      
+      {
+        "id": "1751025267394",
+        "title": "Веб-сервис \"ИТ ЛЕНТА\"",
+        "description": "Платформа для ИТ-специалистов: просмотр и создание постов, управление профилем и портфолио.",
+        "links": [
+          {
+            "name": "github",
+            "url": "https://github.com/tkachev-artem/it-lenta"
+          }
+        ]
+      }
     ]
   }
 ];
 
-// Хук инициализации профилей в localStorage
+// хук инициализации профилей в localStorage
 export const ProfilesSet = () => {
   useEffect(() => {
     const data = storageLocalAPI.getStorageData();
     if (!data) {
-      // Если данных нет вообще — создаём с дефолтными профилями
-      storageLocalAPI.saveStorageData(defaultProfiles, false, "", [], []);
+      // если данных нет вообще — создаём с дефолтными профилями
+      storageLocalAPI.saveStorageData(defaultProfiles, false, "", []);
       return;
     }
 
-    // Проверяем, какие дефолтные профили отсутствуют
+    // проверяем, какие дефолтные профили отсутствуют
     const existingUserIds = data.users.map(user => user.id);
     const missingDefaultProfiles = defaultProfiles.filter(
       defaultProfile => !existingUserIds.includes(defaultProfile.id)
     );
 
-    // Если есть недостающие дефолтные профили — добавляем их
+    // если есть недостающие дефолтные профили — добавляем их
     if (missingDefaultProfiles.length > 0) {
       const updatedUsers = [...data.users, ...missingDefaultProfiles];
       storageLocalAPI.saveStorageData(
         updatedUsers,
         data.auth.isAuthenticated,
         data.auth.user,
-        data.posts,
-        data.projects ?? []
+        data.posts
       );
     }
   }, []);

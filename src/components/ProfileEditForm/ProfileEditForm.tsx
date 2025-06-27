@@ -31,8 +31,6 @@ export const ProfileEditForm = ({ onProfileUpdated }: ProfileEditFormProps) => {
 
   // заполняем поля данными текущего профиля
   useEffect(() => {
-    console.log('ProfileEditForm - profile:', profile)
-    console.log('ProfileEditForm - profile.role:', profile.role)
     setFirstName(profile.firstName)
     setLastName(profile.lastName)
     setNickname(profile.nickname)
@@ -41,7 +39,7 @@ export const ProfileEditForm = ({ onProfileUpdated }: ProfileEditFormProps) => {
     setWorkplace(profile.workplace ?? '')
   }, [profile])
 
-  // упрощенные обработчики для полей
+  // упрощённые обработчики для полей
   const handleFirstNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFirstName(e.target.value)
     if (errors.firstName) {
@@ -92,7 +90,6 @@ export const ProfileEditForm = ({ onProfileUpdated }: ProfileEditFormProps) => {
     if (nickname === profile.nickname) {
       return true
     }
-
     // проверяем уникальность через authLocalAPI
     const existingUser = authLocalAPI.getUserByNickname(nickname)
     if (existingUser) {
@@ -102,7 +99,6 @@ export const ProfileEditForm = ({ onProfileUpdated }: ProfileEditFormProps) => {
       }))
       return false
     }
-    
     return true
   }
 
@@ -115,13 +111,11 @@ export const ProfileEditForm = ({ onProfileUpdated }: ProfileEditFormProps) => {
       setIsLoading(false)
       return
     }
-
     // проверка уникальности никнейма
     if (!checkNicknameUniqueness()) {
       setIsLoading(false)
       return
     }
-
     // обновляем профиль через Redux
     dispatch(updateProfile({
       firstName,
@@ -131,10 +125,8 @@ export const ProfileEditForm = ({ onProfileUpdated }: ProfileEditFormProps) => {
       description,
       workplace
     }))
-    
     // вызываем колбэк если передан
     onProfileUpdated?.()
-    
     setIsLoading(false)
   }
 

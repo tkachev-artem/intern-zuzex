@@ -11,25 +11,25 @@ export type Post = {
     type: 'Контент' | 'Событие' | 'Вакансия';
     direction: string;
     likes: number;
-    likedBy: string[]; //здесь я заменил isLikedByUser на likedBy, это массив id пользователей, которые лайкнули пост
+    likedBy: string[]; // массив id пользователей, которые лайкнули пост
     previewImage?: string;
 }
 
 const initialState: Post[] = postLocalAPI.getPosts();
 
-const postSlice = createAppSlice({ //создание слайса постов
+const postSlice = createAppSlice({
     name: "posts",
     initialState,
 
     reducers: create => ({
-        makePost: create.reducer( //создание поста
+        makePost: create.reducer(
             (state: Post[], action: PayloadAction<Post>) => {
                 state.push(action.payload);
-                // Используем LocalAPI для сохранения
+                // используем LocalAPI для сохранения
                 postLocalAPI.createPost(action.payload);
             }
         ),
-        //редьюсер для лайка поста по пользователю
+        // редьюсер для лайка поста по пользователю
         likePostByUser: create.reducer(
             (state: Post[], action: PayloadAction<{postId: string, userId: string}>) => {
                 const { postId, userId } = action.payload;
@@ -49,7 +49,7 @@ const postSlice = createAppSlice({ //создание слайса постов
                         post.likes -= 1;
                     }
 
-                    // Используем LocalAPI для обновления
+                    // используем LocalAPI для обновления
                     postLocalAPI.updatePost(post);
                 }
             }
@@ -63,7 +63,7 @@ const postSlice = createAppSlice({ //создание слайса постов
                 
                 if (postIndex !== -1) {
                     state.splice(postIndex, 1);
-                    // Используем LocalAPI для удаления
+                    // используем LocalAPI для удаления
                     postLocalAPI.deletePost(postId);
                 }
             }
@@ -77,15 +77,15 @@ const postSlice = createAppSlice({ //создание слайса постов
                 
                 if (postIndex !== -1) {
                     state[postIndex] = updatedPost;
-                    // Используем LocalAPI для обновления
+                    // используем LocalAPI для обновления
                     postLocalAPI.updatePost(updatedPost);
                 }
             }
         ),
 
-        loadPosts: create.reducer( //загрузка постов из локального хранилища
+        loadPosts: create.reducer(
             (state: Post[]) => {
-                // Используем LocalAPI для загрузки
+                // используем LocalAPI для загрузки
                 const posts = postLocalAPI.getPosts();
                 state.length = 0;
                 state.push(...posts);
@@ -106,7 +106,7 @@ const postSlice = createAppSlice({ //создание слайса постов
     }
 });
 
-//фильтрация постов 
+// фильтрация постов 
 // по направлению
 export const filterPostsByDirection = (state: Post[], direction: string) => {
     return state.filter(post => post.direction === direction);

@@ -36,8 +36,7 @@ const createUser = (user: StoredUser): boolean => {
     users,
     currentData?.auth.isAuthenticated ?? false,
     currentData?.auth.user ?? "",
-    currentData?.posts ?? [],
-    currentData?.projects ?? []
+    currentData?.posts ?? []
   );
   
   return true;
@@ -62,8 +61,7 @@ const updateUser = (updated: StoredUser): boolean => {
     users,
     currentData?.auth.isAuthenticated ?? false,
     currentData?.auth.user ?? "",
-    currentData?.posts ?? [],
-    currentData?.projects ?? []
+    currentData?.posts ?? []
   );
   
   return true;
@@ -88,8 +86,7 @@ const deleteUser = (id: string): boolean => {
     users,
     currentData?.auth.isAuthenticated ?? false,
     currentData?.auth.user ?? "",
-    currentData?.posts ?? [],
-    currentData?.projects ?? []
+    currentData?.posts ?? []
   );
   
   return true;
@@ -125,8 +122,7 @@ const updateLastLogin = (nickname: string): boolean => {
     users,
     currentData?.auth.isAuthenticated ?? false,
     currentData?.auth.user ?? "",
-    currentData?.posts ?? [],
-    currentData?.projects ?? []
+    currentData?.posts ?? []
   );
   
   return true;
@@ -154,8 +150,7 @@ const login = (nickname: string, password: string): boolean => {
     currentData?.users ?? [],
     true, // isAuthenticated = true
     nickname, // авторизованный пользователь
-    currentData?.posts ?? [],
-    currentData?.projects ?? []
+    currentData?.posts ?? []
   );
 
   console.log(`пользователь ${nickname} успешно авторизован`);
@@ -181,8 +176,7 @@ const addProjectToUserPortfolio = (userNickname: string, project: Project): bool
     users,
     currentData?.auth.isAuthenticated ?? false,
     currentData?.auth.user ?? "",
-    currentData?.posts ?? [],
-    currentData?.projects ?? []
+    currentData?.posts ?? []
   );
   
   return true;
@@ -210,8 +204,7 @@ const updateProjectInUserPortfolio = (userNickname: string, project: Project): b
     users,
     currentData?.auth.isAuthenticated ?? false,
     currentData?.auth.user ?? "",
-    currentData?.posts ?? [],
-    currentData?.projects ?? []
+    currentData?.posts ?? []
   );
   
   return true;
@@ -236,14 +229,13 @@ const removeProjectFromUserPortfolio = (userNickname: string, projectId: string)
     users,
     currentData?.auth.isAuthenticated ?? false,
     currentData?.auth.user ?? "",
-    currentData?.posts ?? [],
-    currentData?.projects ?? []
+    currentData?.posts ?? []
   );
   
   return true;
 };
 
-// экспорт функций
+// экспорт всех функций
 export const authLocalAPI = {
   getUsers,
   getUserByNickname,

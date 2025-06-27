@@ -1,41 +1,41 @@
 import type { Post } from "@/features/posts/postSlice";
 import { storageLocalAPI } from "@/LocalAPI/storage/storageLocalAPI";
 
-// функция получения всех постов (read)
+// получаем все посты
 const getPosts = (): Post[] => {
   const data = storageLocalAPI.getStorageData();
   if (!data) return [];
   return data.posts;
 };
 
-// функция получения поста по id (read)
+// получаем пост по id
 const getPostById = (id: string): Post | null => {
   const posts = getPosts();
   const post = posts.find(post => post.id === id);
   return post ?? null;
 };
 
-// функция получения постов по автору (read)
+// получаем посты по автору
 const getPostsByAuthor = (author: string): Post[] => {
   const posts = getPosts();
   return posts.filter(post => post.author === author);
 };
 
-// функция создания нового поста (create)
+// создаём новый пост
 const createPost = (post: Post): boolean => {
   const posts = getPosts();
   
-  // Проверяем, что такого поста нет
+  // проверяем, что такого поста нет
   const existingPost = posts.find(p => p.id === post.id);
   if (existingPost) {
     console.log(`пост с id ${post.id} уже существует`);
     return false;
   }
 
-  // Добавляем новый пост
+  // добавляем новый пост
   posts.push(post);
   
-  // Получаем текущие данные для сохранения
+  // получаем текущие данные для сохранения
   const currentData = storageLocalAPI.getStorageData();
   storageLocalAPI.saveStorageData(
     currentData?.users ?? [],
@@ -47,7 +47,7 @@ const createPost = (post: Post): boolean => {
   return true;
 };
 
-// функция обновления поста (update)
+// обновляем пост
 const updatePost = (updated: Post): boolean => {
   const posts = getPosts();
   const index = posts.findIndex(post => post.id === updated.id);
@@ -57,10 +57,10 @@ const updatePost = (updated: Post): boolean => {
     return false;
   }
 
-  // Обновляем пост
+  // обновляем пост
   posts[index] = updated;
   
-  // Получаем текущие данные для сохранения
+  // получаем текущие данные для сохранения
   const currentData = storageLocalAPI.getStorageData();
   storageLocalAPI.saveStorageData(
     currentData?.users ?? [],
@@ -72,7 +72,7 @@ const updatePost = (updated: Post): boolean => {
   return true;
 };
 
-// функция удаления поста (delete)
+// удаляем пост
 const deletePost = (id: string): boolean => {
   const posts = getPosts();
   const index = posts.findIndex(post => post.id === id);
@@ -82,10 +82,10 @@ const deletePost = (id: string): boolean => {
     return false;
   }
 
-  // Удаляем пост
+  // удаляем пост
   posts.splice(index, 1);
   
-  // Получаем текущие данные для сохранения
+  // получаем текущие данные для сохранения
   const currentData = storageLocalAPI.getStorageData();
   storageLocalAPI.saveStorageData(
     currentData?.users ?? [],
@@ -97,7 +97,7 @@ const deletePost = (id: string): boolean => {
   return true;
 };
 
-// экспорт функций
+// экспорт всех функций
 export const postLocalAPI = {
   getPosts,
   getPostById,

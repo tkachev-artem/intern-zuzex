@@ -15,6 +15,7 @@ export const DropdownMenu = () => {
   const userNickname = useAppSelector(selectUserNickname)
   const navigate = useNavigate()
 
+  // обработчик выбора пункта меню
   const handleMenu = (details: { value: string }) => {
     switch (details.value) {
       case 'profile':
@@ -25,7 +26,6 @@ export const DropdownMenu = () => {
         break
       case 'logout':
         dispatch(logout())
-
         void navigate('/auth')
         break
     }

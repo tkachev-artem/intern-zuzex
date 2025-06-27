@@ -30,7 +30,7 @@ export const ProjectCard = ({
   return (
     <Card.Root className="project-card" onClick={handleCardClick}>
       <Card.Body className="project-card-body">
-        {/* Превью изображения */}
+        {/* превью изображения */}
         {project.previewImage && (
           <div className="project-preview">
             <Image
@@ -41,7 +41,7 @@ export const ProjectCard = ({
           </div>
         )}
 
-        {/* Заголовок проекта */}
+        {/* заголовок проекта */}
         <div className="project-header">
           <div className="project-title-section">
             <Text textStyle="lg" className="project-title">
@@ -50,18 +50,18 @@ export const ProjectCard = ({
           </div>
         </div>
 
-        {/* Описание проекта */}
+        {/* описание проекта */}
         {project.description && (
           <Text textStyle="sm" color="fg.muted" className="project-description">
             {project.description}
           </Text>
         )}
 
-        {/* Нижняя секция с ссылками */}
+        {/* нижняя секция с ссылками */}
         <div className="project-footer">
-          {/* Ссылки и действия */}
+          {/* ссылки и действия */}
           <div className="project-controls">
-            {/* Ссылки на проект */}
+            {/* ссылки на проект */}
             {project.links.length > 0 && (
               <div className="project-links">
                 {project.links.map((link, index) => (

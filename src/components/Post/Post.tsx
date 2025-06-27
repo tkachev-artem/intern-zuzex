@@ -6,13 +6,13 @@ import '../Dialog/Dialog.scss';
 
 import { PostCard } from '../PostCard/PostCard';
 import { PostForm } from '../PostForm/PostForm';
-import { Flex } from '@chakra-ui/react';
+import { Flex, useBreakpointValue } from '@chakra-ui/react';
 import { Dialog } from '@saas-ui/react';
 import { loadPosts, type Post } from '@/features/posts/postSlice';
 import { FilterBar } from '../FilterBar';
 import type { DirectionState } from '../FilterBar';
 
-import { directions } from '../PostForm/collections/directions'; // направления
+import { directions } from '../PostForm/collections/directions' // направления
 
 // соответствие названий направлений и их значений
 const directionValueMap: Record<keyof DirectionState, string> = {
@@ -24,7 +24,7 @@ const directionValueMap: Record<keyof DirectionState, string> = {
   marketing: directions.items[5].value,
 };
 
-// Модальное окно для редактирования поста
+// модальное окно для редактирования поста
 type EditPostModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -59,6 +59,7 @@ const EditPostModal = ({ isOpen, onClose, editingPost }: EditPostModalProps) => 
   );
 };
 
+// фильтрация постов по направлениям
 const getFilteredPosts = (
   posts: Post[],
   direction: DirectionState
@@ -88,6 +89,9 @@ const Post = () => {
   const posts = useAppSelector((state) => state.posts);
   const dispatch = useAppDispatch();
 
+  // определяем размер экрана для адаптивности
+  const isMobile = useBreakpointValue({ base: true, lg: false });
+
   useEffect(() => {
     dispatch(loadPosts());
   }, [dispatch]);
@@ -108,11 +112,27 @@ const Post = () => {
     <div className="post">
       {/* <button onClick={() => dispatch(loadPosts())}>Restore Post</button> (загрузка постов из локального хранилища по кнопке) */}
 
-      <div className="filter-bar-container">
-        <FilterBar direction={direction} setDirection={setDirection} />
-      </div>
+      {/* FilterBar для десктопа (фиксированный слева) */}
+      {!isMobile && (
+        <div className="filter-bar-container">
+          <FilterBar direction={direction} setDirection={setDirection} />
+        </div>
+      )}
       
-      <Flex direction="column" gap="4" justify="center" align="center" paddingLeft="144px">
+      <Flex 
+        direction="column" 
+        gap="4" 
+        justify="center" 
+        align="center" 
+        paddingLeft={{ base: "0", lg: "144px" }}
+      >
+        {/* FilterBar для мобильных устройств (над постами) */}
+        {isMobile && (
+          <Flex width="100%" justify="center" marginBottom="4">
+            <FilterBar direction={direction} setDirection={setDirection} />
+          </Flex>
+        )}
+
         {/* рендерим карточки для каждого поста и фильтруем по id от нового к старому */}
         {[...filteredPosts]
           .sort((a, b) => Number(b.id) - Number(a.id))

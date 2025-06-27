@@ -47,30 +47,26 @@ export const PostForm = ({ editingPost, onPostUpdated }: PostFormProps) => {
 
   // обработчик отправки формы
   const handleSubmit = () => {
-    //проверка на заполнение обязательных полей
+    // проверка на заполнение обязательных полей
     if (!title || !content) {
       console.log('ошибка: не заполнены обязательные поля');
       return;
     }
-    
-    //проверка на авторизацию
+    // проверка на авторизацию
     if (!isAuthenticated || !userNickname) {
       console.log('ошибка: пользователь не авторизован');
       return;
     }
-
-    //проверка на длину заголовка
+    // проверка на длину заголовка
     if (title.length > 100) {
       console.log('ошибка: заголовок слишком длинный (максимум 100 символов)');
       return;
     }
-
-    //проверка на длину коннтента
+    // проверка на длину контента
     if (content.length > 20000) {
       console.log('ошибка: текст слишком длинный (максимум 20000 символов)');
       return;
     }
-    
     if (editingPost) {
       // редактируем существующий пост
       const updatedPost: Post = {
@@ -81,37 +77,33 @@ export const PostForm = ({ editingPost, onPostUpdated }: PostFormProps) => {
         direction: direction || 'Frontend',
         previewImage: image ?? ''
       };
-
       dispatch(editPost(updatedPost));
       console.log('Пост успешно обновлён');
     } else {
-    // создаём новый пост
+      // создаём новый пост
       const newPost: Post = {
-      id: Date.now().toString(),
-      title,
-      content,
-      author: userNickname,
-      type: (postType || 'Контент') as 'Контент' | 'Событие' | 'Вакансия',
-      direction: direction || 'Frontend',
-      likes: 0,
-      likedBy: [],
-      previewImage: image ?? ''
-    };
-
-    dispatch(makePost(newPost));
+        id: Date.now().toString(),
+        title,
+        content,
+        author: userNickname,
+        type: (postType || 'Контент') as 'Контент' | 'Событие' | 'Вакансия',
+        direction: direction || 'Frontend',
+        likes: 0,
+        likedBy: [],
+        previewImage: image ?? ''
+      };
+      dispatch(makePost(newPost));
       console.log('Пост успешно создан');
     }
-    
     // вызываем колбэк если передан
     onPostUpdated?.();
-    
     // очищаем форму только при создании нового поста
     if (!isEditMode) {
-    setTitle('');
-    setContent('');
-    setPostType('');
-    setDirection('');
-    setImage(undefined);
+      setTitle('');
+      setContent('');
+      setPostType('');
+      setDirection('');
+      setImage(undefined);
     }
   }
 
@@ -162,7 +154,6 @@ export const PostForm = ({ editingPost, onPostUpdated }: PostFormProps) => {
           {content.length} / 20000 символов
         </Text>
       </Stack>
-
 
       {/* селекторы типа и направления в две колонки */}
       <Stack className="form-selectors">

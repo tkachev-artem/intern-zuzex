@@ -17,36 +17,62 @@ type Project = {
     previewImage?: string;
 }
 
-const initialState: Project[] = projectLocalAPI.getProjects();
+// Состояние теперь пустое, так как проекты хранятся в портфолио пользователей
+const initialState: Project[] = [];
 
 const projectSlice = createAppSlice({
     name: "projects",
     initialState,
 
     reducers: create => ({
-        makeProject: create.reducer(
-            (state: Project[], action: PayloadAction<Project>) => {
-                state.push(action.payload);
-                projectLocalAPI.createProject(action.payload); //сохраняем проект в localStorage
+        // Загрузка всех проектов из портфолио всех пользователей
+        loadAllProjects: create.reducer(
+            (state: Project[]) => {
+                const projects = projectLocalAPI.getProjects();
+                state.length = 0;
+                state.push(...projects);
             }
         ),
-        updateProject: create.reducer(
-            (state: Project[], action: PayloadAction<Project>) => {
-                const index = state.findIndex(project => project.id === action.payload.id);
-                if (index !== -1) {
-                    state[index] = action.payload;
-                }
-                projectLocalAPI.updateProject(action.payload); //обновляем проект в localStorage
-            }
-        ),
-        deleteProject: create.reducer(
+        
+        // Загрузка проектов конкретного пользователя
+        loadUserProjects: create.reducer(
             (state: Project[], action: PayloadAction<string>) => {
-                // Используем правильный способ обновления состояния с Immer
-                const index = state.findIndex(project => project.id === action.payload);
+                const userNickname = action.payload;
+                const projects = projectLocalAPI.getProjectsByUser(userNickname);
+                state.length = 0;
+                state.push(...projects);
+            }
+        ),
+
+        // Создание проекта больше не используется напрямую
+        // Проекты создаются через authLocalAPI.addProjectToUserPortfolio
+        makeProject: create.reducer(
+            (state: Project[], action: PayloadAction<{project: Project, userNickname: string}>) => {
+                const { project, userNickname } = action.payload;
+                state.push(project);
+                projectLocalAPI.createProject(project, userNickname);
+            }
+        ),
+        
+        updateProject: create.reducer(
+            (state: Project[], action: PayloadAction<{project: Project, userNickname?: string}>) => {
+                const { project, userNickname } = action.payload;
+                const index = state.findIndex(p => p.id === project.id);
+                if (index !== -1) {
+                    state[index] = project;
+                }
+                projectLocalAPI.updateProject(project, userNickname);
+            }
+        ),
+        
+        deleteProject: create.reducer(
+            (state: Project[], action: PayloadAction<{projectId: string, userNickname?: string}>) => {
+                const { projectId, userNickname } = action.payload;
+                const index = state.findIndex(p => p.id === projectId);
                 if (index !== -1) {
                     state.splice(index, 1);
                 }
-                projectLocalAPI.deleteProject(action.payload); //удаляем проект из localStorage
+                projectLocalAPI.deleteProject(projectId, userNickname);
             }
         )
     }),
@@ -56,7 +82,7 @@ const projectSlice = createAppSlice({
     }
 })
 
-export const { makeProject, updateProject, deleteProject } = projectSlice.actions;
+export const { loadAllProjects, loadUserProjects, makeProject, updateProject, deleteProject } = projectSlice.actions;
 export const { selectProjects } = projectSlice.selectors;
 export { projectSlice };
 export type { Project, ProjectLink };

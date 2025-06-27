@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Card, HStack, IconButton, Text } from '@chakra-ui/react'
 import { Dialog } from '@saas-ui/react'
 import { useAppSelector, useAppDispatch } from '@/app/hooks'
-import { deleteProject, type Project } from '@/features/projects/projectSlice'
+import type { Project } from '@/features/projects/projectSlice'
 import { selectUser, selectUserNickname } from '@/features/auth/authSlice'
 import { selectProfilePortfolio, removeProjectFromPortfolio } from '@/features/profile/profileSlice'
 import { authLocalAPI } from '@/LocalAPI'
@@ -38,49 +38,52 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
   const nickname = isMyProfile ? currentUser?.nickname : location.pathname.split('/').pop(); 
   const isAuthor = isMyProfile || currentUser?.nickname === nickname;
   
-  // Используем проекты из портфолио пользователя
+  // используем проекты из портфолио пользователя
   const userProjects = portfolioProjects
 
+  // удаление проекта из портфолио
   const handleDeleteProject = (projectId: string) => {
-    // Удаляем из общего массива проектов
-    dispatch(deleteProject(projectId))
-    // Удаляем из портфолио пользователя
     dispatch(removeProjectFromPortfolio(projectId))
-    
-    // Также удаляем из портфолио пользователя в localStorage
     if (userNickname) {
       authLocalAPI.removeProjectFromUserPortfolio(userNickname, projectId)
     }
   }
 
+  // открытие модального окна для добавления проекта
   const handleAddProject = () => {
     setIsProjectModalOpen(true)
   }
 
+  // закрытие модального окна для добавления проекта
   const handleCloseProjectModal = () => {
     setIsProjectModalOpen(false)
   }
 
+  // открытие модального окна для редактирования проекта
   const handleEditProject = (project: Project) => {
     setEditingProject(project)
     setIsEditModalOpen(true)
   }
 
+  // закрытие модального окна для редактирования проекта
   const handleCloseEditModal = () => {
     setIsEditModalOpen(false)
     setEditingProject(null)
   }
 
+  // открытие модального окна для просмотра проекта
   const handleViewProject = (project: Project) => {
     setViewingProject(project)
     setIsDetailModalOpen(true)
   }
 
+  // закрытие модального окна для просмотра проекта
   const handleCloseDetailModal = () => {
     setIsDetailModalOpen(false)
     setViewingProject(null)
   }
 
+  // переход к редактированию из детального просмотра
   const handleEditFromDetail = (project: Project) => {
     setViewingProject(null)
     setIsDetailModalOpen(false)
@@ -88,6 +91,7 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
     setIsEditModalOpen(true)
   }
 
+  // удаление проекта из детального просмотра
   const handleDeleteFromDetail = (projectId: string) => {
     handleDeleteProject(projectId)
     setIsDetailModalOpen(false)
@@ -96,7 +100,11 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
 
   return (
     <div className="portfolio-block">
-      <Card.Root padding='20px' maxWidth='800px' minWidth='800px'>
+      <Card.Root 
+        padding={{ base: '16px', md: '20px' }} 
+        width="100%"
+        maxWidth="800px"
+      >
 
       <Card.Header>
       {isAuthor && (
@@ -113,7 +121,7 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
               </HStack>
           )}
       </Card.Header>
-      {/* Заголовок блока */}
+      {/* заголовок блока */}
       <div className="portfolio-header">
         <Text textStyle="xl" className="portfolio-title">
           Портфолио
@@ -126,7 +134,7 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
         )}
       </div>
 
-      {/* Сетка проектов */}
+      {/* сетка проектов */}
       {userProjects.length > 0 && (
         <div className={`portfolio-grid${userProjects.length === 1 ? ' portfolio-grid-one' : ''}`}>
           {userProjects.map((project) => (
@@ -143,7 +151,7 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
       )}
       </Card.Root>
 
-      {/* Модальное окно для добавления проекта */}
+      {/* модальное окно для добавления проекта */}
       <Dialog.Root open={isProjectModalOpen}>
         <Dialog.Backdrop />
         <Dialog.Content className="dialog-modal">
@@ -159,7 +167,7 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
         </Dialog.Content>
       </Dialog.Root>
 
-      {/* Модальное окно для редактирования проекта */}
+      {/* модальное окно для редактирования проекта */}
       <Dialog.Root open={isEditModalOpen}>
         <Dialog.Backdrop />
         <Dialog.Content className="dialog-modal">
@@ -178,7 +186,7 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
         </Dialog.Content>
       </Dialog.Root>
 
-      {/* Модальное окно для детального просмотра проекта */}
+      {/* модальное окно для детального просмотра проекта */}
       {viewingProject && (
         <ProjectDetail
           project={viewingProject}

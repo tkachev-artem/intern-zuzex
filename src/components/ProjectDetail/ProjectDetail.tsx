@@ -1,11 +1,11 @@
 'use client'
 
-import { Button, Text, Image, HStack, VStack, Separator } from '@chakra-ui/react'
+import { Button, Text, Image, HStack, VStack } from '@chakra-ui/react'
 import { Dialog } from '@saas-ui/react'
 import type { Project } from '@/features/projects/projectSlice'
 import { useAppSelector } from '@/app/hooks'
 import { selectUser } from '@/features/auth/authSlice'
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router-dom'
 import { LuUnlink, LuPencil, LuTrash2, LuX } from 'react-icons/lu'
 import './ProjectDetail.scss'
 import '../Dialog/Dialog.scss'
@@ -27,22 +27,13 @@ export const ProjectDetail = ({
   onEdit, 
   onDelete, 
   showActions = false,
-  authorNickname 
 }: ProjectDetailProps) => {
-  const navigate = useNavigate()
   const location = useLocation()
   const currentUser = useAppSelector(selectUser)
   
   const isMyProfile = location.pathname === '/profile'
   const nickname = isMyProfile ? currentUser?.nickname : location.pathname.split('/').pop()
   const isAuthor = isMyProfile || currentUser?.nickname === nickname
-
-  const handleAuthorClick = () => {
-    if (authorNickname) {
-      void navigate(`/profile/${authorNickname}`)
-      onClose()
-    }
-  }
 
   const handleEdit = () => {
     if (onEdit) {
@@ -101,7 +92,7 @@ export const ProjectDetail = ({
 
         <Dialog.Body className="dialog-body project-detail-body">
           <VStack gap="20px" alignItems="stretch">
-            {/* Превью изображения */}
+            {/* превью изображения */}
             {project.previewImage && (
               <div className="project-detail-preview">
                 <Image
@@ -113,33 +104,14 @@ export const ProjectDetail = ({
               </div>
             )}
 
-            {/* Заголовок и автор */}
+            {/* заголовок */}
             <VStack gap="3" alignItems="stretch">
               <Text textStyle="2xl" fontWeight="bold" className="project-detail-title">
                 {project.title}
               </Text>
-              
-              {authorNickname && (
-                <HStack gap="2">
-                  <Text textStyle="sm" color="fg.muted">
-                    Автор:
-                  </Text>
-                  <Button
-                    variant="ghost"
-                    paddingInline="12px"
-                    size="sm"
-                    onClick={handleAuthorClick}
-                    className="author-link"
-                  >
-                    @{authorNickname}
-                  </Button>
-                </HStack>
-              )}
             </VStack>
 
-            <Separator />
-
-            {/* Описание проекта */}
+            {/* описание проекта */}
             {project.description && (
               <VStack gap="3" alignItems="stretch">
                 <Text textStyle="lg" fontWeight="semibold">
@@ -151,7 +123,7 @@ export const ProjectDetail = ({
               </VStack>
             )}
 
-            {/* Ссылки на проект */}
+            {/* ссылки на проект */}
             {project.links.length > 0 && (
               <VStack gap="3" alignItems="stretch">
                 <Text textStyle="lg" fontWeight="semibold">

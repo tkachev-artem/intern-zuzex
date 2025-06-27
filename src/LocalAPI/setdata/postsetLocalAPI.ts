@@ -35,31 +35,30 @@ const defaultPosts: Post[] = [
   },
 ];
 
-// Хук инициализации постов в localStorage
+// хук инициализации постов в localStorage
 export const PostsSet = () => {
   useEffect(() => {
     const data = storageLocalAPI.getStorageData();
     if (!data) {
-      // Если данных нет вообще — создаём с дефолтными постами
-      storageLocalAPI.saveStorageData([], false, "", defaultPosts, []);
+      // если данных нет вообще — создаём с дефолтными постами
+      storageLocalAPI.saveStorageData([], false, "", defaultPosts);
       return;
     }
 
-    // Проверяем, какие дефолтные посты отсутствуют
+    // проверяем, какие дефолтные посты отсутствуют
     const existingPostIds = data.posts.map(post => post.id);
     const missingDefaultPosts = defaultPosts.filter(
       defaultPost => !existingPostIds.includes(defaultPost.id)
     );
 
-    // Если есть недостающие дефолтные посты — добавляем их
+    // если есть недостающие дефолтные посты — добавляем их
     if (missingDefaultPosts.length > 0) {
       const updatedPosts = [...data.posts, ...missingDefaultPosts];
       storageLocalAPI.saveStorageData(
         data.users,
         data.auth.isAuthenticated,
         data.auth.user,
-        updatedPosts,
-        data.projects ?? []
+        updatedPosts
       );
     }
   }, []);

@@ -17,7 +17,7 @@ export type StoredUser = {
   portfolio: Project[] // портфолио проектов пользователя
 }
 
-// тип авторизации, который мы храним
+// тип авторизации, который сохраняется
 export type StoredAuth = {
   isAuthenticated: boolean // залогинен или нет
   user: string // никнейм залогиненного пользователя
@@ -28,7 +28,6 @@ export type LocalStorageData = {
   users: StoredUser[] // все пользователи
   auth: StoredAuth    // авторизация
   posts: Post[]       // все посты
-  projects?: Project[] // все проекты
   lastUpdated: string // когда последний раз меняли
   version: string     // версия данных
 }
@@ -82,8 +81,7 @@ const saveStorageData = (
   users: StoredUser[],
   isAuthenticated = false,
   userNickname = "",
-  posts: Post[] = [],
-  projects: Project[] = []
+  posts: Post[] = []
 ): void => {
   // Формируем объект с данными для сохранения
   const data: LocalStorageData = {
@@ -93,7 +91,6 @@ const saveStorageData = (
       user: userNickname,
     },
     posts,
-    projects,
     lastUpdated: new Date().toISOString(),
     version: STORAGE_VERSION,
   };

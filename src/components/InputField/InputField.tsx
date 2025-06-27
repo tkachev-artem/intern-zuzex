@@ -29,40 +29,51 @@ export const InputField = ({
   const [visible, setVisible] = useState(false) // состояние для показа/скрытия пароля
 
   return (
-    <HStack gap="10" width="full">
-      <Stack gap="2" width="full">
+    <HStack gap={{ base: "2", sm: "4", md: "6" }} width="full">
+      <Stack gap={{ base: "1", sm: "2" }} width="full">
         <Field.Root required>
-          <Field.Label>{label}</Field.Label>
+          <Field.Label 
+            fontSize={{ base: "sm", sm: "md" }}
+            fontWeight={{ base: "medium", sm: "semibold" }}
+          >
+            {label}
+          </Field.Label>
           {/* если поле для пароля — показываем PasswordInput */}
           {type === "password" ? (
             <PasswordInput
               placeholder={placeholder}
               variant={variant}
-              size="lg"
+              size={{ base: "md", sm: "lg" }}
               onChange={onChange}
               visible={visible}
               onVisibleChange={setVisible}
-              paddingLeft="12px"
+              paddingLeft={{ base: "8px", sm: "12px" }}
+              height={{ base: "10", sm: "12" }}
+              fontSize={{ base: "sm", sm: "md" }}
             />
           ) : (
             // иначе обычный Input
             <Input
               placeholder={placeholder}
               variant={variant}
-              size="lg"
+              size={{ base: "md", sm: "lg" }}
               onChange={onChange}
-              paddingLeft="12px"
+              paddingLeft={{ base: "8px", sm: "12px" }}
+              height={{ base: "10", sm: "12" }}
+              fontSize={{ base: "sm", sm: "md" }}
             />
           )}
         </Field.Root>
         {/* если есть ошибка — показываем алерт */}
         {error && (
-          <Stack gap={2} width="full">
+          <Stack gap={{ base: "1", sm: "2" }} width="full">
             <Alert
               status={status}
               title={error}
-              padding="2"
+              padding={{ base: "2", sm: "3" }}
               alignItems="center"
+              fontSize={{ base: "xs", sm: "sm" }}
+              borderRadius={{ base: "md", sm: "lg" }}
             ></Alert>
           </Stack>
         )}

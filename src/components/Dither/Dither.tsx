@@ -6,6 +6,7 @@ import * as THREE from "three";
 
 import "./Dither.css";
 
+// вершинный шейдер для волн
 const waveVertexShader = `
 precision highp float;
 varying vec2 vUv;
@@ -17,6 +18,7 @@ void main() {
 }
 `;
 
+// фрагментный шейдер для волн
 const waveFragmentShader = `
 precision highp float;
 uniform vec2 resolution;
@@ -97,6 +99,7 @@ void main() {
 }
 `;
 
+// фрагментный шейдер для эффекта дизеринга
 const ditherFragmentShader = `
 precision highp float;
 uniform float colorNum;
@@ -133,10 +136,11 @@ void mainImage(in vec4 inputColor, in vec2 uv, out vec4 outputColor) {
 }
 `;
 
+// класс эффекта ретро-дизеринга
 class RetroEffectImpl extends Effect {
-  public uniforms: Map<string, THREE.Uniform<any>>;
+  public uniforms: Map<string, THREE.Uniform<unknown>>;
   constructor() {
-    const uniforms = new Map<string, THREE.Uniform<any>>([
+    const uniforms = new Map<string, THREE.Uniform<unknown>>([
       ["colorNum", new THREE.Uniform(4.0)],
       ["pixelSize", new THREE.Uniform(2.0)],
     ]);
@@ -144,16 +148,20 @@ class RetroEffectImpl extends Effect {
     this.uniforms = uniforms;
   }
   set colorNum(value: number) {
-    this.uniforms.get("colorNum")!.value = value;
+    const uniform = this.uniforms.get("colorNum");
+    if (uniform) uniform.value = value;
   }
   get colorNum(): number {
-    return this.uniforms.get("colorNum")!.value;
+    const uniform = this.uniforms.get("colorNum");
+    return typeof uniform?.value === "number" ? uniform.value : 0;
   }
   set pixelSize(value: number) {
-    this.uniforms.get("pixelSize")!.value = value;
+    const uniform = this.uniforms.get("pixelSize");
+    if (uniform) uniform.value = value;
   }
   get pixelSize(): number {
-    return this.uniforms.get("pixelSize")!.value;
+    const uniform = this.uniforms.get("pixelSize");
+    return typeof uniform?.value === "number" ? uniform.value : 0;
   }
 }
 
@@ -169,8 +177,9 @@ const RetroEffect = forwardRef<RetroEffectImpl, { colorNum: number; pixelSize: n
 
 RetroEffect.displayName = 'RetroEffect';
 
-interface WaveUniforms {
-  [key: string]: THREE.Uniform<any>;
+// тип для uniform-переменных волн
+export type WaveUniforms = {
+  [key: string]: THREE.Uniform<unknown>;
   time: THREE.Uniform<number>;
   resolution: THREE.Uniform<THREE.Vector2>;
   waveSpeed: THREE.Uniform<number>;
@@ -182,7 +191,7 @@ interface WaveUniforms {
   mouseRadius: THREE.Uniform<number>;
 }
 
-interface DitheredWavesProps {
+export type DitheredWavesProps = {
   waveSpeed: number;
   waveFrequency: number;
   waveAmplitude: number;
@@ -194,6 +203,19 @@ interface DitheredWavesProps {
   mouseRadius: number;
 }
 
+export type DitherProps = {
+  waveSpeed?: number;
+  waveFrequency?: number;
+  waveAmplitude?: number;
+  waveColor?: [number, number, number];
+  colorNum?: number;
+  pixelSize?: number;
+  disableAnimation?: boolean;
+  enableMouseInteraction?: boolean;
+  mouseRadius?: number;
+}
+
+// компонент с волнами и дизерингом
 function DitheredWaves({
   waveSpeed,
   waveFrequency,
@@ -206,12 +228,14 @@ function DitheredWaves({
   mouseRadius,
 }: DitheredWavesProps) {
   const mesh = useRef<THREE.Mesh>(null);
+  // позиция мыши для взаимодействия с волнами
   const [mousePos, setMousePos] = useState<{ x: number; y: number }>({
     x: 0,
     y: 0,
   });
   const { viewport, size, gl } = useThree();
 
+  // uniform-переменные для шейдера волн
   const waveUniformsRef = useRef<WaveUniforms>({
     time: new THREE.Uniform(0),
     resolution: new THREE.Uniform(new THREE.Vector2(0, 0)),
@@ -224,6 +248,7 @@ function DitheredWaves({
     mouseRadius: new THREE.Uniform(mouseRadius),
   });
 
+  // обновление разрешения при изменении размера окна
   useEffect(() => {
     const dpr = gl.getPixelRatio();
     const newWidth = Math.floor(size.width * dpr);
@@ -234,6 +259,7 @@ function DitheredWaves({
     }
   }, [size, gl]);
 
+  // обновление uniform-переменных на каждом кадре
   useFrame(({ clock }) => {
     if (!disableAnimation) {
       waveUniformsRef.current.time.value = clock.getElapsedTime();
@@ -250,6 +276,7 @@ function DitheredWaves({
     }
   });
 
+  // обработка движения мыши
   const handlePointerMove = (e: ThreeEvent<PointerEvent>) => {
     if (!enableMouseInteraction) return;
     const rect = gl.domElement.getBoundingClientRect();
@@ -285,18 +312,6 @@ function DitheredWaves({
       </mesh>
     </>
   );
-}
-
-interface DitherProps {
-  waveSpeed?: number;
-  waveFrequency?: number;
-  waveAmplitude?: number;
-  waveColor?: [number, number, number];
-  colorNum?: number;
-  pixelSize?: number;
-  disableAnimation?: boolean;
-  enableMouseInteraction?: boolean;
-  mouseRadius?: number;
 }
 
 export default function Dither({

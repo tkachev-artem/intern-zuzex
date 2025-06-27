@@ -12,7 +12,8 @@ const AuthPage = () => {
     SIGNUP: 2,
   }
 
-  const [authPages, setAuthPages] = useState(AUTH_PAGES.AUTH) //отвечает за текущую страницу авторизации
+  // отвечает за текущую страницу авторизации
+  const [authPages, setAuthPages] = useState(AUTH_PAGES.AUTH)
 
   const handleAuthPage = () => {
     setAuthPages(AUTH_PAGES.AUTH)

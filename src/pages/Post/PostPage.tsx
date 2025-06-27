@@ -13,8 +13,9 @@ import { Dialog } from '@saas-ui/react';
 import { useLocation } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { loadPosts, type Post } from '@/features/posts/postSlice';
+import { Box } from '@chakra-ui/react';
 
-// Модальное окно для редактирования поста
+// модальное окно для редактирования поста
 type EditPostModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -62,12 +63,35 @@ const PostPage = () => {
     }, [dispatch]);
 
     const location = useLocation();
-    const postId = location.pathname.split('/').pop(); //получаем id поста из url
+    const postId = location.pathname.split('/').pop(); // получаем id поста из url
 
-    const post = posts.find((post) => post.id === String(postId)); //ищем пост по id
+    const post = posts.find((post) => post.id === String(postId)); // ищем пост по id
     
     if (!post) {
-        return <div>Пост не найден</div> 
+        return (
+            <AppShell height="100vh" header={<HomeNavbar />}>
+                <Page.Root>
+                                         <Page.Body 
+                         maxW="none" 
+                         px={{ base: "4", md: "6", lg: "8" }}
+                         py={{ base: "4", md: "6" }}
+                         paddingBottom={{ base: "20", md: "6" }}
+                         display="flex" 
+                         justifyContent="center"
+                         alignItems="center"
+                         minHeight="50vh"
+                     >
+                        <Box 
+                            textAlign="center" 
+                            fontSize={{ base: "lg", md: "xl" }}
+                            color="gray.600"
+                        >
+                            Пост не найден
+                        </Box>
+                    </Page.Body>
+                </Page.Root>
+            </AppShell>
+        );
     }
 
     const handleEditPost = (post: Post) => {
@@ -87,13 +111,26 @@ const PostPage = () => {
         header={<HomeNavbar />}
       >
         <Page.Root>
-            <Page.Body maxW="none" px="0" display="flex" justifyContent="center" paddingTop="24px" paddingBottom="24px" paddingLeft="24px" paddingRight="24px">
-                <PostCard 
-                    key={post.id} 
-                    post={post} 
-                    FullPostOpen={true}
-                    onEditPost={handleEditPost}
-                />
+            <Page.Body 
+                maxW="none" 
+                px={{ base: "4", md: "6", lg: "8" }}
+                py={{ base: "4", md: "6" }}
+                paddingBottom={{ base: "20", md: "6" }}
+                display="flex" 
+                justifyContent="center"
+                bg="gray.50"
+            >
+                <Box
+                    width="100%"
+                    maxWidth={{ base: "100%", md: "800px", lg: "900px" }}
+                >
+                    <PostCard 
+                        key={post.id} 
+                        post={post} 
+                        FullPostOpen={true}
+                        onEditPost={handleEditPost}
+                    />
+                </Box>
             </Page.Body>
         </Page.Root>
     </AppShell>

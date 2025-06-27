@@ -35,7 +35,7 @@ type FormProps = {
   handleSignupPage?: () => void // обработчик перехода на страницу регистрации
 }
 
-// сам компонент формы
+// компонент формы
 export const Form = ({
   title,
   subtitle,
@@ -56,17 +56,38 @@ export const Form = ({
   }
 
   return (
-    <Center width="full" paddingTop="15vh">
-      <Stack>
-        <Card.Root size="lg" width="420px" padding="6" gap="4">
+    <Center width="full" paddingTop={{
+      base: "2vh",
+      sm: "5vh", 
+      md: "10vh",
+      lg: "15vh"
+    }}>
+      <Stack width="full" maxWidth="500px" padding={{ base: "1", sm: "2", md: "4" }}>
+        <Card.Root 
+          size={{ base: "md", sm: "lg" }}
+          width="full"
+          padding={{ base: "4", sm: "6" }}
+          gap="4"
+          borderRadius={{ base: "lg", sm: "xl" }}
+        >
           <Card.Header textAlign="center">
-            <Heading size="xl">{title}</Heading>
-            <Card.Description paddingLeft="40px" paddingRight="40px">
+            <Heading 
+              size={{ base: "lg", sm: "xl" }}
+              marginBottom={{ base: "2", sm: "3" }}
+            >
+              {title}
+            </Heading>
+            <Card.Description 
+              paddingLeft={{ base: "2", sm: "8", md: "10" }}
+              paddingRight={{ base: "2", sm: "8", md: "10" }}
+              fontSize={{ base: "sm", sm: "md" }}
+              lineHeight={{ base: "1.4", sm: "1.5" }}
+            >
               {subtitle}
             </Card.Description>
           </Card.Header>
 
-          <Card.Body gap="4">
+          <Card.Body gap={{ base: "3", sm: "4" }}>
             {/* рендерим все поля ввода */}
             {input_fields?.map((field, index) => (
               <InputField key={index} {...field} />
@@ -90,31 +111,36 @@ export const Form = ({
                 <Alert
                   status="error"
                   title={authError}
-                  padding="2"
+                  padding={{ base: "2", sm: "3" }}
                   alignItems="center"
+                  fontSize={{ base: "sm", sm: "md" }}
                 ></Alert>
               </Stack>
             )}
           </Card.Body>
 
-          <Card.Footer paddingTop="2">
+          <Card.Footer paddingTop={{ base: "2", sm: "3" }}>
             <Center width="full">
               {/* если форма авторизации */}
               {auth_type === "auth" && (
-                <Stack>
+                <Stack width="full" gap={{ base: "2", sm: "3" }}>
                   <Button
                     variant="surface"
-                    padding="4"
+                    padding={{ base: "3", sm: "4" }}
                     onClick={button_action}
+                    width="full"
+                    fontSize={{ base: "sm", sm: "md" }}
+                    height={{ base: "10", sm: "12" }}
                   >
                     {button_text}
                   </Button>
                   <Button
                     variant="plain"
-                    size="xs"
-                    padding="4"
+                    size={{ base: "sm", sm: "xs" }}
+                    padding={{ base: "2", sm: "4" }}
                     textDecoration="underline"
                     onClick={handleSignupPage}
+                    fontSize={{ base: "xs", sm: "sm" }}
                   >
                     Ещё нет аккаунта?
                   </Button>
@@ -122,20 +148,24 @@ export const Form = ({
               )}
               {/* если форма регистрации */}
               {auth_type === "signup" && (
-                <Stack>
+                <Stack width="full" gap={{ base: "2", sm: "3" }}>
                   <Button
                     variant="surface"
-                    padding="4"
+                    padding={{ base: "3", sm: "4" }}
                     onClick={button_action}
+                    width="full"
+                    fontSize={{ base: "sm", sm: "md" }}
+                    height={{ base: "10", sm: "12" }}
                   >
                     {button_text}
                   </Button>
                   <Button
                     variant="plain"
-                    size="xs"
-                    padding="4"
+                    size={{ base: "sm", sm: "xs" }}
+                    padding={{ base: "2", sm: "4" }}
                     textDecoration="underline"
                     onClick={handleAuthPage}
+                    fontSize={{ base: "xs", sm: "sm" }}
                   >
                     Уже есть аккаунт?
                   </Button>
@@ -143,24 +173,45 @@ export const Form = ({
               )}
               {/* если форма для аккаунта */}
               {auth_type === "account" && (
-                <Stack>
-                  <Button variant="surface" padding="4" onClick={button_action}>
+                <Stack width="full">
+                  <Button 
+                    variant="surface" 
+                    padding={{ base: "3", sm: "4" }} 
+                    onClick={button_action}
+                    width="full"
+                    fontSize={{ base: "sm", sm: "md" }}
+                    height={{ base: "10", sm: "12" }}
+                  >
                     {button_text}
                   </Button>
                 </Stack>
               )}
               {/* если форма для выбора роли */}
               {auth_type === "role" && (
-                <Stack>
-                  <Button variant="surface" padding="4" onClick={button_action}>
+                <Stack width="full">
+                  <Button 
+                    variant="surface" 
+                    padding={{ base: "3", sm: "4" }} 
+                    onClick={button_action}
+                    width="full"
+                    fontSize={{ base: "sm", sm: "md" }}
+                    height={{ base: "10", sm: "12" }}
+                  >
                     {button_text}
                   </Button>
                 </Stack>
               )}
               {/* если форма успешной регистрации */}
               {auth_type === "success" && (
-                <Stack>
-                  <Button variant="surface" padding="4" onClick={button_action}>
+                <Stack width="full">
+                  <Button 
+                    variant="surface" 
+                    padding={{ base: "3", sm: "4" }} 
+                    onClick={button_action}
+                    width="full"
+                    fontSize={{ base: "sm", sm: "md" }}
+                    height={{ base: "10", sm: "12" }}
+                  >
                     {button_text}
                   </Button>
                 </Stack>

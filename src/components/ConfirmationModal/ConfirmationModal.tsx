@@ -4,6 +4,7 @@ import { Text, Button, HStack } from '@chakra-ui/react'
 import { Dialog } from '@saas-ui/react'
 import './ConfirmationModal.scss'
 
+// тип пропсов для модального окна подтверждения
 type ConfirmationModalProps = {
   isOpen: boolean;
   onClose: () => void;
@@ -30,6 +31,7 @@ export const ConfirmationModal = ({
     onClose();
   };
 
+  // определяем цвет кнопки подтверждения в зависимости от варианта
   const getConfirmButtonColorScheme = () => {
     switch (variant) {
       case 'danger':

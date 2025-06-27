@@ -37,8 +37,10 @@ const SIGNUP_STEPS = {
 
 type SignupStepType = (typeof SIGNUP_STEPS)[keyof typeof SIGNUP_STEPS]
 
+// компонент регистрации пользователя
 const SignUp = ({ handleAuthPage, handleSignupPage }: SignUpProps) => {
   const dispatch = useAppDispatch()
+  // текущий шаг регистрации
   const [signupStep, setSignupStep] = useState<SignupStepType>(SIGNUP_STEPS.USER)
 
   const isSecondStepValid = useAppSelector(selectFormSecondStep)
@@ -47,6 +49,7 @@ const SignUp = ({ handleAuthPage, handleSignupPage }: SignUpProps) => {
   const currentRole = useAppSelector(selectRole)
   const registrationMessage = useAppSelector(selectRegistrationMessage)
 
+  // обработка шага с пользователем
   const handleUserStep = () => {
     dispatch(validateForm())
     if (isSecondStepValid) {
@@ -54,6 +57,7 @@ const SignUp = ({ handleAuthPage, handleSignupPage }: SignUpProps) => {
     }
   }
 
+  // обработка шага с аккаунтом
   const handleAccountStep = () => {
     dispatch(validateForm())
     if (isThirdStepValid) {
@@ -61,6 +65,7 @@ const SignUp = ({ handleAuthPage, handleSignupPage }: SignUpProps) => {
     }
   }
 
+  // обработка шага с ролью
   const handleRoleStep = () => {
     dispatch(validateForm())
     if (currentRole.trim() !== "" && isFourthStepValid) {
@@ -69,6 +74,7 @@ const SignUp = ({ handleAuthPage, handleSignupPage }: SignUpProps) => {
     }
   }
 
+  // обработка успешной регистрации
   const handleSuccessStep = () => {
     dispatch(resetRegistrationForm())
     handleAuthPage()

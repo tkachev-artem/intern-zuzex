@@ -77,6 +77,7 @@ const profileSlice = createAppSlice({
             (state: UserProfile, action: PayloadAction<Partial<UserProfile>>) => {
                 Object.assign(state, action.payload);
                 
+                // обновляем пользователя в LocalAPI
                 const updatedUser = {
                     id: state.id,
                     nickname: state.nickname,

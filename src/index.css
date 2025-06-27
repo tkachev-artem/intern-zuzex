@@ -1,4 +1,4 @@
-/* Saas UI Global Styles */
+/* глобальные стили для интерфейса */
 * {
   margin: 0;
   padding: 0;
@@ -25,4 +25,87 @@ code {
 
 .css-10hetoo {
   padding-right: revert-layer !important;
+}
+
+/* Адаптивные стили для мобильных устройств */
+@media (max-width: 480px) {
+  html {
+    font-size: 14px; /* Уменьшаем базовый размер шрифта на мобильных */
+  }
+  
+  body {
+    overflow-x: hidden; /* Предотвращаем горизонтальную прокрутку */
+  }
+  
+  /* Скрываем полосы прокрутки webkit на мобильных */
+  ::-webkit-scrollbar {
+    width: 2px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+  }
+}
+
+/* Адаптивные стили для планшетов */
+@media (min-width: 481px) and (max-width: 768px) {
+  html {
+    font-size: 15px;
+  }
+}
+
+/* Адаптивные стили для десктопов */
+@media (min-width: 769px) {
+  html {
+    font-size: 16px;
+  }
+}
+
+/* Общие адаптивные утилиты */
+.mobile-hidden {
+  @media (max-width: 480px) {
+    display: none !important;
+  }
+}
+
+.desktop-hidden {
+  @media (min-width: 769px) {
+    display: none !important;
+  }
+}
+
+/* Улучшение touch-интерфейса */
+@media (hover: none) and (pointer: coarse) {
+  button, 
+  .chakra-button,
+  [role="button"] {
+    min-height: 44px; /* Минимальная высота для touch-элементов */
+    min-width: 44px;
+  }
+  
+  input,
+  select,
+  textarea {
+    font-size: 16px; /* Предотвращаем zoom на iOS */
+  }
+}
+
+/* Высокие экраны - улучшаем отступы */
+@media (min-height: 800px) {
+  .auth_container {
+    justify-content: center !important;
+  }
+}
+
+/* Низкие экраны - уменьшаем отступы */
+@media (max-height: 600px) {
+  .auth_container {
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
 }

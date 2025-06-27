@@ -8,7 +8,7 @@ import { directions } from './collections/directions' // направления
 type DirectionSelectProps = {
   label: string
   placeholder: string
-  value?: string // добавляем пропс value для контроля состояния извне
+  value?: string // пропс value для контроля состояния извне
   onChange: (value: string) => void
 }
 
@@ -53,7 +53,6 @@ export const DirectionSelect = ({
           ))}
         </Select.Content>
       </Select.Root>
-
     </Stack>
   )
 } 

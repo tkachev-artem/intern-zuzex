@@ -1,7 +1,32 @@
+// Запрещаем прокрутку страницы на странице авторизации
+body {
+  overflow: hidden;
+}
+
 .auth_container {
   position: relative;
   min-height: 100vh;
   width: 100%;
+  display: flex;
+  justify-content: center;
+  padding: 1rem;
+  overflow-y: auto; // Разрешаем прокрутку только внутри контейнера при необходимости
+  
+  // Mobile-first подход
+  @media (max-width: 480px) {
+    padding: 0.5rem;
+    margin-top: 140px;
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+
+  @media (min-width: 481px) and (max-width: 768px) {
+    padding: 1rem;
+  }
+
+  @media (min-width: 769px) {
+    padding: 2rem;
+  }
 }
 
 .auth_background {
@@ -16,4 +41,19 @@
 .auth_component {
   position: relative;
   z-index: 1;
+  width: 100%;
+  max-width: 500px;
+  
+  // Адаптивная максимальная ширина
+  @media (max-width: 480px) {
+    max-width: 100%;
+  }
+
+  @media (min-width: 481px) and (max-width: 768px) {
+    max-width: 450px;
+  }
+
+  @media (min-width: 769px) {
+    max-width: 500px;
+  }
 }

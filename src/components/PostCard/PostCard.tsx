@@ -38,7 +38,7 @@ const getColor = (direction: string) => {
     }
 }
 
-//указатель того, что пост создан пользователем
+// указатель того, что пост создан пользователем
 const isUserPost = (post: Post, userNickname: string) => {
     if (post.author === userNickname) {
         return true;

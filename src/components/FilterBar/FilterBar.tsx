@@ -5,6 +5,7 @@ import { HiFilter } from 'react-icons/hi'
 
 import './FilterBar.scss'
 
+// тип состояния фильтра по направлениям
 type DirectionState = {
     frontend: boolean;
     backend: boolean;

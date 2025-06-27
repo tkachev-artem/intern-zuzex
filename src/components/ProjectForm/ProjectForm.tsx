@@ -6,7 +6,7 @@ import { Input, Textarea, Alert } from '@saas-ui/react'
 import '../PostForm/PostForm.scss'
 import { PhotoPreviewUpload } from '../PostForm/FileUpload'
 import { useAppDispatch, useAppSelector } from '@/app/hooks'
-import { makeProject, updateProject, type Project, type ProjectLink } from '@/features/projects/projectSlice'
+import type { Project, ProjectLink } from '@/features/projects/projectSlice'
 import { selectUserNickname, selectIsAuthenticated } from '@/features/auth/authSlice'
 import { addProjectToPortfolio, updateProjectInPortfolio } from '@/features/profile/profileSlice'
 import { authLocalAPI } from '@/LocalAPI'
@@ -43,7 +43,7 @@ export const ProjectForm = ({ editingProject, onProjectUpdated }: ProjectFormPro
     if (editingProject) {
       setTitle(editingProject.title)
       setDescription(editingProject.description ?? '')
-      // Заполняем 3 слота ссылок данными из проекта
+      // заполняем 3 слота ссылок данными из проекта
       const projectLinks = [...editingProject.links]
       const newLinks: ProjectLink[] = [
         projectLinks[0] || { name: '', url: '' },
@@ -140,13 +140,10 @@ export const ProjectForm = ({ editingProject, onProjectUpdated }: ProjectFormPro
         previewImage: image
       };
 
-      // Обновляем проект в общем массиве проектов
-      dispatch(updateProject(updatedProject));
-      
-      // Обновляем проект в портфолио текущего пользователя
+      // обновляем проект в портфолио пользователя
       dispatch(updateProjectInPortfolio(updatedProject));
       
-      // Также обновляем проект в портфолио пользователя в localStorage
+      // также обновляем проект в портфолио пользователя в localStorage
       if (userNickname) {
         authLocalAPI.updateProjectInUserPortfolio(userNickname, updatedProject);
       }
@@ -162,13 +159,10 @@ export const ProjectForm = ({ editingProject, onProjectUpdated }: ProjectFormPro
         previewImage: image
       };
 
-      // Добавляем проект в общий массив проектов
-      dispatch(makeProject(newProject));
-      
-      // Добавляем проект в портфолио текущего пользователя
+      // добавляем проект в портфолио текущего пользователя
       dispatch(addProjectToPortfolio(newProject));
       
-      // Также добавляем проект в портфолио пользователя в localStorage
+      // также добавляем проект в портфолио пользователя в localStorage
       if (userNickname) {
         authLocalAPI.addProjectToUserPortfolio(userNickname, newProject);
       }
@@ -192,8 +186,6 @@ export const ProjectForm = ({ editingProject, onProjectUpdated }: ProjectFormPro
     
     setIsLoading(false);
   }
-
-
 
   return (
     <Stack>

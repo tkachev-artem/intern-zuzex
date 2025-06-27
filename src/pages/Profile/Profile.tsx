@@ -1,4 +1,4 @@
-import { Stack } from "@chakra-ui/react"
+import { Stack, Box, Container } from "@chakra-ui/react"
 import { useAppDispatch, useAppSelector } from "@/app/hooks"
 import { useEffect } from "react";
 import { useLocation, useParams } from 'react-router-dom';
@@ -19,18 +19,18 @@ export const Profile = () => {
     const currentUser = useAppSelector(selectUser); // авторизованный пользователь
     const profileData = useAppSelector(selectProfile); // данные профиля для отображения
     
-    // Определяем чей это профиль
+    // определяем чей это профиль
     const isMyProfile = location.pathname === '/profile';
     const targetNickname = isMyProfile ? currentUser?.nickname : username;
     const isAuthor = isMyProfile || currentUser?.nickname === targetNickname;
 
-    // Загружаем профиль при инициализации компонента
+    // загружаем профиль при инициализации компонента
     useEffect(() => {
         if (isMyProfile && currentUser?.id) {
-            // Если это мой профиль - загружаем по ID
+            // если это мой профиль - загружаем по ID
             dispatch(getProfile(currentUser.id));
         } else if (username) {
-            // Если это профиль другого пользователя - загружаем по nickname
+            // если это профиль другого пользователя - загружаем по nickname
             try {
                 dispatch(getProfileByNickname(username));
             } catch (error) {
@@ -40,21 +40,34 @@ export const Profile = () => {
     }, [isMyProfile, currentUser?.id, username, dispatch]);
 
     return (
-        <div>
+        <Box minHeight="100vh" bg="gray.50">
             <HomeNavbar />
 
-            <Stack>
+            <Container 
+                maxWidth={{ base: "100%", md: "container.md", lg: "container.lg" }}
+                paddingX={{ base: "4", md: "6", lg: "8" }}
+                paddingY="6"
+            >
+                <Stack 
+                    gap={{ base: "6", md: "8" }}
+                    align="center"
+                    width="100%"
+                >
+                    {/* блок профиля */}
+                    <Box width="100%" maxWidth="800px">
+                        <ProfileHeader />
+                    </Box>
 
-                {/* Блок профиля */}
-                <ProfileHeader />
-
-                {/* Блок портфолио */}
-                <PortfolioBlock 
-                    userId={profileData.id} 
-                    showActions={isAuthor}
-                    title={isMyProfile ? "Мои проекты" : "Проекты"}
-                />
-            </Stack>
-        </div>
+                    {/* блок портфолио */}
+                    <Box width="100%" maxWidth="800px">
+                        <PortfolioBlock 
+                            userId={profileData.id} 
+                            showActions={isAuthor}
+                            title={isMyProfile ? "Мои проекты" : "Проекты"}
+                        />
+                    </Box>
+                </Stack>
+            </Container>
+        </Box>
     )
 }

@@ -1,5 +1,4 @@
-//компонент для загрузки фото, взять из библиотеки saas ui
-
+// компонент для загрузки фото (используется библиотека saas ui)
 'use client'
 
 import { Button, Heading, Stack, Text, Image} from '@chakra-ui/react'
@@ -22,9 +21,9 @@ export const PhotoPreviewUpload = ({ image, setImage, setIsLoading }: PhotoUploa
 
   // обработчик загрузки файла
   const handleFileUpload = (details: FileAcceptDetails) => {
-    const file = details.files[0] //получаем файл из массива
+    const file = details.files[0] // получаем файл из массива
 
-    // проверка размера файла (5MB максимум)
+    // проверка размера файла (максимум 5MB)
     if (file.size > 5 * 1024 * 1024)  {
       console.log('ошибка: файл слишком большой') 
       return
@@ -32,7 +31,8 @@ export const PhotoPreviewUpload = ({ image, setImage, setIsLoading }: PhotoUploa
 
     const fileFormat = file.name.split('.').pop()?.toLowerCase()
 
-    if (!fileFormat || !FORMAT_FILE.includes(fileFormat as typeof FORMAT_FILE[number])) { //проверяем формат файла
+    // проверяем формат файла
+    if (!fileFormat || !FORMAT_FILE.includes(fileFormat as typeof FORMAT_FILE[number])) {
       console.log('ошибка: неверный формат файла')
       return
     }
