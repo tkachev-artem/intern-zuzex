@@ -5,6 +5,13 @@
   border-radius: 6px;
   background: #ffffff;
   transition: box-shadow 0.15s ease-in-out;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  
+  &:hover {
+    border-color: #00A63E;
+    border-width: 2px;
+  }
 }
 
 .project-card-body {
@@ -46,7 +53,7 @@
   align-items: center;
   gap: 8px;
   flex: 1;
-  min-width: 0; // Для корректного truncate
+  min-width: 0;
 }
 
 .project-repo-icon {
@@ -56,7 +63,7 @@
 }
 
 .project-title {
-  color: #0969da !important;
+  color: black !important;
   font-size: 16px !important;
   font-weight: 600 !important;
   line-height: 1.25;
@@ -64,7 +71,8 @@
   text-decoration: none;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
+  max-width: 320px;
+  width: 100%;
 }
 
 .project-type-badge {
@@ -82,11 +90,10 @@
   font-size: 14px !important;
   line-height: 1.5;
   margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
+  max-width: 320px;
+  width: 100%;
 }
 
 .project-footer {
@@ -121,8 +128,8 @@
   }
   
   &:hover {
-    color: #0969da !important;
-    background-color: #f6f8fa !important;
+    color: white !important;
+    background-color: #00A63E !important;
   }
 }
 

@@ -8,6 +8,7 @@ import { selectProfilePortfolio, removeProjectFromPortfolio } from '@/features/p
 import { authLocalAPI } from '@/LocalAPI'
 import { ProjectCard } from '@/components/ProjectCard/ProjectCard'
 import { ProjectForm } from '@/components/ProjectForm'
+import { ProjectDetail } from '@/components/ProjectDetail/ProjectDetail'
 import './PortfolioBlock.scss'
 import '../Dialog/Dialog.scss'
 import { LuCirclePlus } from 'react-icons/lu'
@@ -22,7 +23,9 @@ type PortfolioBlockProps = {
 export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockProps) => {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false)
   const [editingProject, setEditingProject] = useState<Project | null>(null)
+  const [viewingProject, setViewingProject] = useState<Project | null>(null)
   
   const dispatch = useAppDispatch()
   const portfolioProjects = useAppSelector(selectProfilePortfolio)
@@ -68,6 +71,29 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
     setEditingProject(null)
   }
 
+  const handleViewProject = (project: Project) => {
+    setViewingProject(project)
+    setIsDetailModalOpen(true)
+  }
+
+  const handleCloseDetailModal = () => {
+    setIsDetailModalOpen(false)
+    setViewingProject(null)
+  }
+
+  const handleEditFromDetail = (project: Project) => {
+    setViewingProject(null)
+    setIsDetailModalOpen(false)
+    setEditingProject(project)
+    setIsEditModalOpen(true)
+  }
+
+  const handleDeleteFromDetail = (projectId: string) => {
+    handleDeleteProject(projectId)
+    setIsDetailModalOpen(false)
+    setViewingProject(null)
+  }
+
   return (
     <div className="portfolio-block">
       <Card.Root padding='20px' maxWidth='800px' minWidth='800px'>
@@ -80,6 +106,7 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
                       size="sm"
                       aria-label="Добавить проект"
                       onClick={handleAddProject}
+                      colorPalette="green"
                   >
                       <LuCirclePlus size={18}/>
                   </IconButton>
@@ -101,7 +128,7 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
 
       {/* Сетка проектов */}
       {userProjects.length > 0 && (
-        <div className="portfolio-grid">
+        <div className={`portfolio-grid${userProjects.length === 1 ? ' portfolio-grid-one' : ''}`}>
           {userProjects.map((project) => (
             <ProjectCard
               key={project.id}
@@ -109,6 +136,7 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
               showActions={showActions && currentUser?.id === userId}
               onDelete={handleDeleteProject}
               onEdit={handleEditProject}
+              onView={handleViewProject}
             />
           ))}
         </div>
@@ -149,6 +177,19 @@ export const PortfolioBlock = ({userId, showActions = false }: PortfolioBlockPro
           </Dialog.Body>
         </Dialog.Content>
       </Dialog.Root>
+
+      {/* Модальное окно для детального просмотра проекта */}
+      {viewingProject && (
+        <ProjectDetail
+          project={viewingProject}
+          isOpen={isDetailModalOpen}
+          onClose={handleCloseDetailModal}
+          onEdit={handleEditFromDetail}
+          onDelete={handleDeleteFromDetail}
+          showActions={showActions && currentUser?.id === userId}
+          authorNickname={nickname}
+        />
+      )}
     </div>
   )
 } 

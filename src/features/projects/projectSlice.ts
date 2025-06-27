@@ -4,11 +4,16 @@ import type { PayloadAction } from "@reduxjs/toolkit";
 //импортируем функции из LocalAPI 
 import { projectLocalAPI } from "@/LocalAPI";
 
+type ProjectLink = {
+    name: string;
+    url: string;
+}
+
 type Project = {
     id: string;
     title: string;
     description?: string;
-    links: string[];
+    links: ProjectLink[];
     previewImage?: string;
 }
 
@@ -54,4 +59,4 @@ const projectSlice = createAppSlice({
 export const { makeProject, updateProject, deleteProject } = projectSlice.actions;
 export const { selectProjects } = projectSlice.selectors;
 export { projectSlice };
-export type { Project };
+export type { Project, ProjectLink };

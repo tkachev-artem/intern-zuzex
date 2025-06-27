@@ -1,44 +1,34 @@
-import { Button, Text, Image, HStack, IconButton } from '@chakra-ui/react'
+import { Button, Text, Image } from '@chakra-ui/react'
 import { Card } from '@saas-ui/react'
-import { HiExternalLink, HiCode } from 'react-icons/hi'
 import type { Project } from '@/features/projects/projectSlice'
 import './ProjectCard.scss'
-import { LuPencil } from 'react-icons/lu'
-import { useLocation } from 'react-router-dom'
-import { useAppSelector } from '@/app/hooks'
-import { selectUser } from '@/features/auth/authSlice'
+import { LuUnlink } from 'react-icons/lu'
 
 type ProjectCardProps = {
   project: Project
-  onDelete?: (id: string) => void
-  onEdit?: (project: Project) => void
   showActions?: boolean
+  onDelete?: (projectId: string) => void
+  onEdit?: (project: Project) => void
+  onView?: (project: Project) => void
 }
 
-export const ProjectCard = ({ project, onDelete, onEdit, showActions = false }: ProjectCardProps) => {
+export const ProjectCard = ({ 
+  project, 
+  onView,
+}: ProjectCardProps) => {
 
-  const location = useLocation();
-  const currentUser = useAppSelector(selectUser)
-  const isMyProfile = location.pathname === '/profile';
-  const nickname = isMyProfile ? currentUser?.nickname : location.pathname.split('/').pop(); 
-  const isAuthor = isMyProfile || currentUser?.nickname === nickname;
+  const handleCardClick = (e: React.MouseEvent) => {
+    if ((e.target as HTMLElement).closest('button')) {
+      return;
+    }
+    
+    if (onView) {
+      onView(project);
+    }
+  };
   
   return (
-    <Card.Root className="project-card">
-      <Card.Header>
-      {isAuthor && onEdit && (
-              <HStack gap="1" className="profile-actions">
-                  <IconButton
-                      variant="ghost"
-                      size="sm"
-                      aria-label="Редактировать проект"
-                      onClick={() => { onEdit(project) }}
-                  >
-                    <LuPencil size={16}/>
-                  </IconButton>
-              </HStack>
-          )}
-      </Card.Header>
+    <Card.Root className="project-card" onClick={handleCardClick}>
       <Card.Body className="project-card-body">
         {/* Превью изображения */}
         {project.previewImage && (
@@ -54,7 +44,7 @@ export const ProjectCard = ({ project, onDelete, onEdit, showActions = false }: 
         {/* Заголовок проекта */}
         <div className="project-header">
           <div className="project-title-section">
-            <Text fontWeight="600" textStyle="lg" className="project-title">
+            <Text textStyle="lg" className="project-title">
               {project.title}
             </Text>
           </div>
@@ -74,48 +64,24 @@ export const ProjectCard = ({ project, onDelete, onEdit, showActions = false }: 
             {/* Ссылки на проект */}
             {project.links.length > 0 && (
               <div className="project-links">
-                {project.links.map((link, index) => {
-                  const isGitHub = link.toLowerCase().includes('github')
-                  return (
-                    <Button
-                      key={index}
-                      size="xs"
-                      variant="ghost"
-                      className="project-link-button"
-                      onClick={() => {
-                        window.open(link, '_blank')
-                      }}
-                    >
-                      {isGitHub ? (
-                        <>
-                          <HiCode />
-                          Code
-                        </>
-                      ) : (
-                        <>
-                          <HiExternalLink />
-                          Demo
-                        </>
-                      )}
-                    </Button>
-                  )
-                })}
+                {project.links.map((link, index) => (
+                  <Button
+                    key={index}
+                    size="sm"
+                    variant="ghost"
+                    className="project-link-button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      window.open(link.url, '_blank');
+                    }}
+                  >
+                    <LuUnlink size={24} />
+                    <Text fontSize="md" fontWeight="500">
+                      {link.name || 'Ссылка'}
+                    </Text>
+                  </Button>
+                ))}
               </div>
-            )}
-
-            {/* Действия с проектом (для владельца) */}
-            {showActions && onDelete && (
-              <Button
-                size="xs"
-                colorPalette="red"
-                variant="ghost"
-                onClick={() => {
-                  onDelete(project.id)
-                }}
-                className="project-delete-button"
-              >
-                Удалить
-              </Button>
             )}
           </div>
         </div>
