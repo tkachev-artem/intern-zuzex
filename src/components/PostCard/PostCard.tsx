@@ -18,7 +18,6 @@ import { selectUserNickname } from '@/features/auth/authSlice';
 import { selectUserId } from '@/features/auth/authSlice';
 import { ConfirmationModal } from '../ConfirmationModal';
 
-
 // цвета для направления поста
 const getColor = (direction: string) => {
     switch (direction) {

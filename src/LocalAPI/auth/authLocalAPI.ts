@@ -132,29 +132,6 @@ const updateLastLogin = (nickname: string): boolean => {
   return true;
 };
 
-// функция создания тестовых пользователей
-const createDefaultUsers = (): void => {
-  const users = getUsers();
-  
-  // Если пользователей нет — создаём тестовых
-  if (users.length === 0) {
-    const defaultUsers: StoredUser[] = [
-      {
-        id: "user_001",
-        nickname: "tkachevtech",
-        firstName: "Ткачев",
-        lastName: "Артём",
-        password: "123456789A",
-        role: "Frontend Developer",
-        email: "tkachev@developer.com",
-        createdAt: new Date().toISOString(),
-        portfolio: [], // изначально у пользователя нет проектов
-      },
-    ];
-
-    storageLocalAPI.saveStorageData(defaultUsers, false, "", [], []);
-  }
-};
 
 // функция авторизации пользователя
 const login = (nickname: string, password: string): boolean => {
@@ -276,7 +253,6 @@ export const authLocalAPI = {
   isNicknameUnique,
   isEmailUnique,
   updateLastLogin,
-  createDefaultUsers,
   login,
   addProjectToUserPortfolio,
   updateProjectInUserPortfolio,

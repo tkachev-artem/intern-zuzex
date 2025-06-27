@@ -84,7 +84,7 @@ export const ProfileHeader = () => {
         </Stack>
 
         <Stack alignItems="center" justifyContent="center">
-            <Text fontWeight="semibold" textStyle="md">
+            <Text fontWeight="semibold" textStyle="md" textAlign="center" maxWidth="600px">
                 {profileDescription}
             </Text>
         </Stack>

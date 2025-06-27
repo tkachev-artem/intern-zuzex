@@ -3,6 +3,8 @@
 import { Button, Menu } from '@saas-ui/react'
 import { HiFilter } from 'react-icons/hi'
 
+import './FilterBar.scss'
+
 type DirectionState = {
     frontend: boolean;
     backend: boolean;
@@ -28,6 +30,7 @@ export const FilterBar = ({ direction, setDirection }: FilterBarProps) => {
       </Menu.Trigger>
       <Menu.Content minW="10rem">
         <Menu.CheckboxItem
+          className="filter-checkbox"
           checked={direction.frontend}
           onCheckedChange={(checked) => {setDirection({ ...direction, frontend: checked })}}
           value="frontend"
@@ -36,6 +39,7 @@ export const FilterBar = ({ direction, setDirection }: FilterBarProps) => {
           Фронтенд
         </Menu.CheckboxItem>
         <Menu.CheckboxItem
+          className="filter-checkbox"
           checked={direction.backend}
           onCheckedChange={(checked) => {
             setDirection({ ...direction, backend: checked }) 
@@ -46,6 +50,7 @@ export const FilterBar = ({ direction, setDirection }: FilterBarProps) => {
           Бэкенд
         </Menu.CheckboxItem>
         <Menu.CheckboxItem
+          className="filter-checkbox"
           checked={direction.qa}
           onCheckedChange={(checked) => {setDirection({ ...direction, qa: checked })}}
           value="qa"
@@ -54,6 +59,7 @@ export const FilterBar = ({ direction, setDirection }: FilterBarProps) => {
           Тестирование
         </Menu.CheckboxItem>
         <Menu.CheckboxItem
+          className="filter-checkbox"
           checked={direction.design}
           onCheckedChange={(checked) => {setDirection({ ...direction, design: checked })}}
           value="design"
@@ -62,6 +68,7 @@ export const FilterBar = ({ direction, setDirection }: FilterBarProps) => {
           Дизайн
         </Menu.CheckboxItem>
         <Menu.CheckboxItem
+          className="filter-checkbox"
           checked={direction.management}
           onCheckedChange={(checked) => {setDirection({ ...direction, management: checked })}}
           value="management"
@@ -70,6 +77,7 @@ export const FilterBar = ({ direction, setDirection }: FilterBarProps) => {
           Менеджмент
         </Menu.CheckboxItem>
         <Menu.CheckboxItem
+          className="filter-checkbox"
             checked={direction.marketing}
           onCheckedChange={(checked) => {setDirection({ ...direction, marketing: checked })}}
           value="marketing"

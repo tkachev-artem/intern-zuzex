@@ -8,6 +8,7 @@ import { useAppSelector } from '@/app/hooks'
 import { logout, selectUserNickname } from '@/features/auth/authSlice'
 import { useAppDispatch } from '@/app/hooks'
 import { useNavigate } from 'react-router-dom'
+import { LuX, LuUser } from 'react-icons/lu'
 
 export const DropdownMenu = () => {
   const dispatch = useAppDispatch()
@@ -38,8 +39,14 @@ export const DropdownMenu = () => {
         </IconButton>
       </Menu.Trigger>
       <Menu.Content className="dropdown-menu-content">
-        <Menu.Item value="profile" className='text'>Профиль</Menu.Item>
-        <Menu.Item value="logout" className='logout-text'>Выйти</Menu.Item>
+        <Menu.Item value="profile" className="dd-profile">
+          <LuUser size={16} />
+          Профиль
+        </Menu.Item>
+        <Menu.Item value="logout" className='dd-logout'>
+          <LuX size={16} />
+          Выйти
+        </Menu.Item>
       </Menu.Content>
     </Menu.Root>
   )

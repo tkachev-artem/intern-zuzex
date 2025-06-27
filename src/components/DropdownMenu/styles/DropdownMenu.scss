@@ -4,13 +4,19 @@
     gap: 8px;
     padding: 8px;
 
-    .text {
+    .dd-profile {
         font-size: 14px;
         color: #000;
+        padding-inline: 8px;
+        padding-top: 4px;
+        padding-bottom: 4px;
     }
 
-    .logout-text {
+    .dd-logout {
         color: #FF0000;
+        padding-inline: 8px;
+        padding-top: 4px;
+        padding-bottom: 4px;
     }
 }
 

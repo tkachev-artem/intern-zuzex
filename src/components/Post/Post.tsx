@@ -113,14 +113,16 @@ const Post = () => {
       </div>
       
       <Flex direction="column" gap="4" justify="center" align="center" paddingLeft="144px">
-        {/* рендерим карточки для каждого поста */}
-        {filteredPosts.map(post => (
-          <PostCard 
-            key={post.id} 
-            post={post} 
-            onEditPost={handleEditPost}
-          />
-        ))}
+        {/* рендерим карточки для каждого поста и фильтруем по id от нового к старому */}
+        {[...filteredPosts]
+          .sort((a, b) => Number(b.id) - Number(a.id))
+          .map(post => (
+            <PostCard 
+              key={post.id} 
+              post={post} 
+              onEditPost={handleEditPost}
+            />
+          ))}
       </Flex>
 
       {/* модальное окно для редактирования поста */}

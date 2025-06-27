@@ -3,23 +3,23 @@ import Home from "./pages/Home/Home"
 import "./App.css"
 import Auth from "./pages/Auth/Auth"
 
-import { authLocalAPI, storageLocalAPI } from "./LocalAPI"
+import { storageLocalAPI } from "./LocalAPI"
 import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from "./app/hooks"
 import { restoreUser, selectIsAuthenticated } from "./features/auth/authSlice"
 import { ProtectedRoute } from "./components/RouteGuard/RouteGuard"
 import PostPage from "./pages/Post/PostPage"
 import { Profile } from "./pages/Profile/Profile"
+import { ProfilesSet } from "./LocalAPI/setdata/profilesetLocalAPI"
 
 export const App = () => {
+  ProfilesSet();
   const dispatch = useAppDispatch()
   const isAuthenticated = useAppSelector(selectIsAuthenticated)
   const [isInitialized, setIsInitialized] = useState(false)
 
   // инициализация приложения
   useEffect(() => {
-    authLocalAPI.createDefaultUsers() //тестовая пачка пользователей
-    
     //сесия
     const userAuthSession = storageLocalAPI.getStorageData()?.auth
     if (userAuthSession?.isAuthenticated && userAuthSession.user) {

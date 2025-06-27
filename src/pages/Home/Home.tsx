@@ -1,15 +1,13 @@
 'use client'
 
 import { HomeNavbar } from '@/components/Navbar/Navbar'
-//import "./styles/Home.scss"
 import Post from '@/components/Post/Post'
+import { AppShell, Page } from '@saas-ui/react'
 
-import {
-  AppShell, 
-  Page
-} from '@saas-ui/react'
+import { PostsSet } from '@/LocalAPI/setdata/postsetLocalAPI' //набор постов для тестирования
 
 const Home = () => {
+  PostsSet();
   return (
     <AppShell
         height="100vh"

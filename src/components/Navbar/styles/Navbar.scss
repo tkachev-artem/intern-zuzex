@@ -10,7 +10,7 @@
     padding: 12px 24px;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: space-between;
     height: 60px;
     position: relative;
 }
@@ -36,15 +36,6 @@
         border: none !important;
         position: relative;
         z-index: 1;
-        
-        &:hover {
-            color: #333;
-        }
-
-        &[data-state="active"] {
-            color: #333;
-            font-weight: 500;
-        }
 
         svg {
             width: 16px;

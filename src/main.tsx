@@ -6,11 +6,7 @@ import { store } from "./app/store"
 import { App } from "./App"
 import "./index.css"
 
-// Инициализация localStorage с тестовыми пользователями
-import { authLocalAPI } from "./LocalAPI"
-
-// Инициализируем localStorage при запуске приложения
-authLocalAPI.createDefaultUsers()
+// Инициализация localStorage происходит через хуки в компонентах
 
 const container = document.getElementById("root")
 
