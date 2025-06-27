@@ -82,9 +82,9 @@ export const App = () => {
           }
         />
         
-        {/* профиль пользователя по username */}
+        {/* профиль пользователя по username - более специфичный путь */}
         <Route 
-          path="/:username"
+          path="/user/:username"
           element={<Profile />}
         />
 

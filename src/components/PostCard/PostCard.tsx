@@ -104,7 +104,7 @@ export const PostCard = ({ post, onEditPost, FullPostOpen }: PostCardProps) => {
 
     // обработчик навигации к профилю автора
     const handleNavigateToAuthor = () => {
-        void navigate(`/${post.author}`);
+        void navigate(`/user/${post.author}`);
     };
 
     // обработчик открытия модального окна удаления
