@@ -12,6 +12,9 @@ import PostPage from "./pages/Post/PostPage"
 import { Profile } from "./pages/Profile/Profile"
 import { ProfilesSet } from "./LocalAPI/setdata/profilesetLocalAPI"
 
+// Определяем базовый путь для GitHub Pages
+const basename = import.meta.env.NODE_ENV === 'production' ? '/it-lenta' : ''
+
 export const App = () => {
   ProfilesSet();
   const dispatch = useAppDispatch()
@@ -45,7 +48,7 @@ export const App = () => {
   }
 
   return (
-    <BrowserRouter>
+    <BrowserRouter basename={basename}>
       <Routes>
         {/* защищенная главная страница - только для авторизованных */}
         <Route 
