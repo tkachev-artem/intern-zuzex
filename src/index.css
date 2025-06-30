@@ -27,17 +27,15 @@ code {
   padding-right: revert-layer !important;
 }
 
-/* Адаптивные стили для мобильных устройств */
 @media (max-width: 480px) {
   html {
-    font-size: 14px; /* Уменьшаем базовый размер шрифта на мобильных */
+    font-size: 14px; 
   }
   
   body {
-    overflow-x: hidden; /* Предотвращаем горизонтальную прокрутку */
+    overflow-x: hidden; 
   }
   
-  /* Скрываем полосы прокрутки webkit на мобильных */
   ::-webkit-scrollbar {
     width: 2px;
   }
@@ -59,14 +57,12 @@ code {
   }
 }
 
-/* Адаптивные стили для десктопов */
 @media (min-width: 769px) {
   html {
     font-size: 16px;
   }
 }
 
-/* Общие адаптивные утилиты */
 .mobile-hidden {
   @media (max-width: 480px) {
     display: none !important;
@@ -84,25 +80,23 @@ code {
   button, 
   .chakra-button,
   [role="button"] {
-    min-height: 44px; /* Минимальная высота для touch-элементов */
+    min-height: 44px;
     min-width: 44px;
   }
   
   input,
   select,
   textarea {
-    font-size: 16px; /* Предотвращаем zoom на iOS */
+    font-size: 16px;
   }
 }
 
-/* Высокие экраны - улучшаем отступы */
 @media (min-height: 800px) {
   .auth_container {
     justify-content: center !important;
   }
 }
 
-/* Низкие экраны - уменьшаем отступы */
 @media (max-height: 600px) {
   .auth_container {
     padding-top: 1rem !important;

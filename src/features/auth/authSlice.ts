@@ -127,6 +127,9 @@ const authSlice = createAppSlice({
 
     // логаут пользователя
     logout: create.reducer((state: AuthState) => {
+      // очищаем localStorage
+      authLocalAPI.logout()
+      
       state.userState.isAuthenticated = false
       state.userState.user = null
       state.form.nickname = ""

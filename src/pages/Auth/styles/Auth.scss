@@ -10,12 +10,12 @@ body {
   display: flex;
   justify-content: center;
   padding: 1rem;
-  overflow-y: auto; // Разрешаем прокрутку только внутри контейнера при необходимости
+  overflow-y: auto; 
   
-  // Mobile-first подход
+  
   @media (max-width: 480px) {
     padding: 0.5rem;
-    margin-top: 140px;
+    margin-top: 120px;
     align-items: flex-start;
     padding-top: 2rem;
   }
@@ -44,7 +44,6 @@ body {
   width: 100%;
   max-width: 500px;
   
-  // Адаптивная максимальная ширина
   @media (max-width: 480px) {
     max-width: 100%;
   }

@@ -60,7 +60,7 @@ export const Form = ({
       base: "2vh",
       sm: "5vh", 
       md: "10vh",
-      lg: "15vh"
+      lg: "10vh"
     }}>
       <Stack width="full" maxWidth="500px" padding={{ base: "1", sm: "2", md: "4" }}>
         <Card.Root 

@@ -11,12 +11,17 @@ import { ProtectedRoute } from "./components/RouteGuard/RouteGuard"
 import PostPage from "./pages/Post/PostPage"
 import { Profile } from "./pages/Profile/Profile"
 import { ProfilesSet } from "./LocalAPI/setdata/profilesetLocalAPI"
+import { PostsSet } from "./LocalAPI/setdata/postsetLocalAPI"
+import { loadPosts } from "./features/posts/postSlice"
 
 // Определяем базовый путь для GitHub Pages
-const basename = import.meta.env.NODE_ENV === 'production' ? '/it-lenta' : ''
+const basename = import.meta.env.PROD ? '/it-lenta' : ''
 
 export const App = () => {
+  // Инициализируем данные при запуске приложения
   ProfilesSet();
+  PostsSet();
+  
   const dispatch = useAppDispatch()
   const isAuthenticated = useAppSelector(selectIsAuthenticated)
   const [isInitialized, setIsInitialized] = useState(false)
@@ -31,6 +36,13 @@ export const App = () => {
     
     setIsInitialized(true)
   }, [dispatch])
+
+  // загружаем посты при изменении состояния авторизации
+  useEffect(() => {
+    if (isAuthenticated) {
+      dispatch(loadPosts())
+    }
+  }, [isAuthenticated, dispatch])
 
   // показываем загрузку пока идет инициализация
   if (!isInitialized) {

@@ -235,6 +235,21 @@ const removeProjectFromUserPortfolio = (userNickname: string, projectId: string)
   return true;
 };
 
+// функция выхода пользователя (logout)
+const logout = (): boolean => {
+  const currentData = storageLocalAPI.getStorageData();
+  
+  storageLocalAPI.saveStorageData(
+    currentData?.users ?? [],
+    false, // isAuthenticated = false
+    "", // очищаем авторизованного пользователя
+    currentData?.posts ?? []
+  );
+
+  console.log('пользователь успешно вышел из системы');
+  return true;
+};
+
 // экспорт всех функций
 export const authLocalAPI = {
   getUsers,
@@ -246,6 +261,7 @@ export const authLocalAPI = {
   isEmailUnique,
   updateLastLogin,
   login,
+  logout,
   addProjectToUserPortfolio,
   updateProjectInUserPortfolio,
   removeProjectFromUserPortfolio,
